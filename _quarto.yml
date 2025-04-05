@@ -1,5 +1,8 @@
-project:
-  title: "lab-01"
-
+title: "lab-01"
+subtitle: 'Data Science Tools'
+author:
+  name: colleen
+  email: hoskinscolleen@gmail.com
+format: html
 
 
