@@ -1,8 +1,0 @@
----
-title: "523-C"
-toc: false
-about: 
-  template: jolla
----
-
-## This website is for 523-C assignments!
