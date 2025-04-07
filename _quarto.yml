@@ -1,3 +1,7 @@
+project:
+  type: website
+  output-dir: docs
+
 title: "lab-01"
 subtitle: 'Data Science Tools'
 author:
