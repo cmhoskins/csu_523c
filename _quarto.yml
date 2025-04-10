@@ -6,6 +6,8 @@ website:
   title: "523 C"
   navbar:
     left:
+      - href: index.qmd
+        text: Home
       - lab-01.qmd
       - lab-02.qmd
 

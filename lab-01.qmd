@@ -1,5 +1,8 @@
 ---
-title: "lab-01"
+title: "Lab 1 - COVID Trends"
+output: 
+  html:
+    code-fold: true
 ---
 
 ```{r}
