@@ -1,6 +1,5 @@
 ---
 title: "Lab 2 - Distances and Projections"
-author: "Colleen Hoskins"
 output: 
   html:
     code-fold: true

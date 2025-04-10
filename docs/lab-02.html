@@ -8,7 +8,7 @@
 
 <meta name="author" content="Colleen Hoskins">
 
-<title>Lab 2 - Distances and Projections</title>
+<title>Lab 2 - Distances and Projections – 523 C</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,6 +59,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
@@ -69,16 +70,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -106,28 +109,92 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">523 C</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./lab-01.html"> 
+<span class="menu-text">lab-01</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./lab-02.html" aria-current="page"> 
+<span class="menu-text">Lab 2 - Distances and Projections</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#question-1" id="toc-question-1" class="nav-link active" data-scroll-target="#question-1">Question 1:</a>
+  <ul class="collapse">
+  <li><a href="#define-a-projection" id="toc-define-a-projection" class="nav-link" data-scroll-target="#define-a-projection">1.1 Define a Projection</a></li>
+  <li><a href="#get-usa-state-boundaries" id="toc-get-usa-state-boundaries" class="nav-link" data-scroll-target="#get-usa-state-boundaries">1.2 - Get USA state boundaries</a></li>
+  <li><a href="#get-country-boundaries-for-mexico-the-united-states-of-america-and-canada" id="toc-get-country-boundaries-for-mexico-the-united-states-of-america-and-canada" class="nav-link" data-scroll-target="#get-country-boundaries-for-mexico-the-united-states-of-america-and-canada">1.3 - Get country boundaries for Mexico, the United States of America, and Canada</a></li>
+  <li><a href="#get-city-locations-from-the-csv-file" id="toc-get-city-locations-from-the-csv-file" class="nav-link" data-scroll-target="#get-city-locations-from-the-csv-file">1.4 - Get city locations from the CSV file</a></li>
+  </ul></li>
+  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a>
+  <ul class="collapse">
+  <li><a href="#distance-to-usa-border-coastline-or-national-km" id="toc-distance-to-usa-border-coastline-or-national-km" class="nav-link" data-scroll-target="#distance-to-usa-border-coastline-or-national-km">2.1 - Distance to USA Border (coastline or national) (km)</a></li>
+  <li><a href="#distance-to-states-km" id="toc-distance-to-states-km" class="nav-link" data-scroll-target="#distance-to-states-km">2.2 - Distance to States (km)</a></li>
+  <li><a href="#distance-to-mexico-km" id="toc-distance-to-mexico-km" class="nav-link" data-scroll-target="#distance-to-mexico-km">2.3 - Distance to Mexico (km)</a></li>
+  <li><a href="#distance-to-canada-km" id="toc-distance-to-canada-km" class="nav-link" data-scroll-target="#distance-to-canada-km">2.4 - Distance to Canada (km)</a></li>
+  </ul></li>
+  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a>
+  <ul class="collapse">
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">3.1 Data</a></li>
+  <li><a href="#city-distance-from-the-border" id="toc-city-distance-from-the-border" class="nav-link" data-scroll-target="#city-distance-from-the-border">3.2 - City Distance from the Border</a></li>
+  <li><a href="#city-distance-from-nearest-state" id="toc-city-distance-from-nearest-state" class="nav-link" data-scroll-target="#city-distance-from-nearest-state">3.3 City Distance from Nearest State</a></li>
+  <li><a href="#equidistance-boundary-from-mexico-and-canada" id="toc-equidistance-boundary-from-mexico-and-canada" class="nav-link" data-scroll-target="#equidistance-boundary-from-mexico-and-canada">3.4 Equidistance boundary from Mexico and Canada</a></li>
+  </ul></li>
+  <li><a href="#question-4---real-world-application" id="toc-question-4---real-world-application" class="nav-link" data-scroll-target="#question-4---real-world-application">Question 4 - Real World Application</a>
+  <ul class="collapse">
+  <li><a href="#quantifying-border-zone" id="toc-quantifying-border-zone" class="nav-link" data-scroll-target="#quantifying-border-zone">4.1 Quantifying Border Zone</a></li>
+  </ul></li>
+  <li><a href="#mapping-border-zone" id="toc-mapping-border-zone" class="nav-link" data-scroll-target="#mapping-border-zone">4.2 Mapping Border Zone</a></li>
+  <li><a href="#instead-of-labeling-the-10-most-populous-cites-label-the-most-populous-city-in-each-state-within-the-danger-zone." id="toc-instead-of-labeling-the-10-most-populous-cites-label-the-most-populous-city-in-each-state-within-the-danger-zone." class="nav-link" data-scroll-target="#instead-of-labeling-the-10-most-populous-cites-label-the-most-populous-city-in-each-state-within-the-danger-zone.">4.3 Instead of labeling the 10 most populous cites, label the most populous city in each state within the Danger Zone.</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Lab 2 - Distances and Projections</h1>
-<p class="subtitle lead">Data Science Tools</p>
 </div>
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -256,7 +323,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"5 Cities Furthest From a State Border"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="tabwid"><style>.cl-4f72790c{}.cl-4f60dc2e{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-4f681dae{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-4f681dcc{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-4f684e78{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4f684e8c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4f684ea0{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4f684ea1{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4f684eaa{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4f684eb4{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-4f72790c"><thead><tr style="overflow-wrap:break-word;"><th class="cl-4f684e78"><p class="cl-4f681dae"><span class="cl-4f60dc2e">city</span></p></th><th class="cl-4f684e78"><p class="cl-4f681dae"><span class="cl-4f60dc2e">state</span></p></th><th class="cl-4f684e8c"><p class="cl-4f681dcc"><span class="cl-4f60dc2e">distance from border (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">Ludell</span></p></td><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">KS</span></p></td><td class="cl-4f684ea1"><p class="cl-4f681dcc"><span class="cl-4f60dc2e">1,012.508</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">Dresden</span></p></td><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">KS</span></p></td><td class="cl-4f684ea1"><p class="cl-4f681dcc"><span class="cl-4f60dc2e">1,012.398</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">Herndon</span></p></td><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">KS</span></p></td><td class="cl-4f684ea1"><p class="cl-4f681dcc"><span class="cl-4f60dc2e">1,007.763</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">Hill City</span></p></td><td class="cl-4f684ea0"><p class="cl-4f681dae"><span class="cl-4f60dc2e">KS</span></p></td><td class="cl-4f684ea1"><p class="cl-4f681dcc"><span class="cl-4f60dc2e">1,005.140</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-4f684eaa"><p class="cl-4f681dae"><span class="cl-4f60dc2e">Atwood</span></p></td><td class="cl-4f684eaa"><p class="cl-4f681dae"><span class="cl-4f60dc2e">KS</span></p></td><td class="cl-4f684eb4"><p class="cl-4f681dcc"><span class="cl-4f60dc2e">1,004.734</span></p></td></tr></tbody></table></div>
+<div class="tabwid"><style>.cl-5cb0da4e{}.cl-5caa035e{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5cacc51c{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5cacc530{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5cacd9f8{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5cacda0c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5cacda16{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5cacda20{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5cacda2a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5cacda34{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-5cb0da4e"><thead><tr style="overflow-wrap:break-word;"><th class="cl-5cacd9f8"><p class="cl-5cacc51c"><span class="cl-5caa035e">city</span></p></th><th class="cl-5cacd9f8"><p class="cl-5cacc51c"><span class="cl-5caa035e">state</span></p></th><th class="cl-5cacda0c"><p class="cl-5cacc530"><span class="cl-5caa035e">distance from border (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">Ludell</span></p></td><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">KS</span></p></td><td class="cl-5cacda20"><p class="cl-5cacc530"><span class="cl-5caa035e">1,012.508</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">Dresden</span></p></td><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">KS</span></p></td><td class="cl-5cacda20"><p class="cl-5cacc530"><span class="cl-5caa035e">1,012.398</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">Herndon</span></p></td><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">KS</span></p></td><td class="cl-5cacda20"><p class="cl-5cacc530"><span class="cl-5caa035e">1,007.763</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">Hill City</span></p></td><td class="cl-5cacda16"><p class="cl-5cacc51c"><span class="cl-5caa035e">KS</span></p></td><td class="cl-5cacda20"><p class="cl-5cacc530"><span class="cl-5caa035e">1,005.140</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5cacda2a"><p class="cl-5cacc51c"><span class="cl-5caa035e">Atwood</span></p></td><td class="cl-5cacda2a"><p class="cl-5cacc51c"><span class="cl-5caa035e">KS</span></p></td><td class="cl-5cacda34"><p class="cl-5cacc530"><span class="cl-5caa035e">1,004.734</span></p></td></tr></tbody></table></div>
 </div>
 </div>
 </section>
@@ -284,7 +351,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"5 USA Cities Furthest From a State Border"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="tabwid"><style>.cl-539a0ce8{}.cl-538fc06c{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-53947ff8{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5394800c{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5394a69a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5394a6ae{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5394a6b8{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5394a6c2{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5394a6cc{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5394a6d6{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-539a0ce8"><thead><tr style="overflow-wrap:break-word;"><th class="cl-5394a69a"><p class="cl-53947ff8"><span class="cl-538fc06c">city</span></p></th><th class="cl-5394a69a"><p class="cl-53947ff8"><span class="cl-538fc06c">state</span></p></th><th class="cl-5394a6ae"><p class="cl-5394800c"><span class="cl-538fc06c">distance from border (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">Briggs</span></p></td><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">TX</span></p></td><td class="cl-5394a6c2"><p class="cl-5394800c"><span class="cl-538fc06c">309.4150</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">Lampasas</span></p></td><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">TX</span></p></td><td class="cl-5394a6c2"><p class="cl-5394800c"><span class="cl-538fc06c">308.9216</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">Kempner</span></p></td><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">TX</span></p></td><td class="cl-5394a6c2"><p class="cl-5394800c"><span class="cl-538fc06c">302.5868</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">Bertram</span></p></td><td class="cl-5394a6b8"><p class="cl-53947ff8"><span class="cl-538fc06c">TX</span></p></td><td class="cl-5394a6c2"><p class="cl-5394800c"><span class="cl-538fc06c">302.5776</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5394a6cc"><p class="cl-53947ff8"><span class="cl-538fc06c">Harker Heights</span></p></td><td class="cl-5394a6cc"><p class="cl-53947ff8"><span class="cl-538fc06c">TX</span></p></td><td class="cl-5394a6d6"><p class="cl-5394800c"><span class="cl-538fc06c">298.8138</span></p></td></tr></tbody></table></div>
+<div class="tabwid"><style>.cl-5e9d6aa2{}.cl-5e980882{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5e9a83a0{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5e9a83b4{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5e9a9142{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5e9a9143{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5e9a914c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5e9a914d{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5e9a9156{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5e9a9157{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-5e9d6aa2"><thead><tr style="overflow-wrap:break-word;"><th class="cl-5e9a9142"><p class="cl-5e9a83a0"><span class="cl-5e980882">city</span></p></th><th class="cl-5e9a9142"><p class="cl-5e9a83a0"><span class="cl-5e980882">state</span></p></th><th class="cl-5e9a9143"><p class="cl-5e9a83b4"><span class="cl-5e980882">distance from border (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">Briggs</span></p></td><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">TX</span></p></td><td class="cl-5e9a914d"><p class="cl-5e9a83b4"><span class="cl-5e980882">309.4150</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">Lampasas</span></p></td><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">TX</span></p></td><td class="cl-5e9a914d"><p class="cl-5e9a83b4"><span class="cl-5e980882">308.9216</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">Kempner</span></p></td><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">TX</span></p></td><td class="cl-5e9a914d"><p class="cl-5e9a83b4"><span class="cl-5e980882">302.5868</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">Bertram</span></p></td><td class="cl-5e9a914c"><p class="cl-5e9a83a0"><span class="cl-5e980882">TX</span></p></td><td class="cl-5e9a914d"><p class="cl-5e9a83b4"><span class="cl-5e980882">302.5776</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5e9a9156"><p class="cl-5e9a83a0"><span class="cl-5e980882">Harker Heights</span></p></td><td class="cl-5e9a9156"><p class="cl-5e9a83a0"><span class="cl-5e980882">TX</span></p></td><td class="cl-5e9a9157"><p class="cl-5e9a83b4"><span class="cl-5e980882">298.8138</span></p></td></tr></tbody></table></div>
 </div>
 </div>
 </section>
@@ -311,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"5 Cities Furthest From the Mexican Border"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="tabwid"><style>.cl-53d50c6c{}.cl-53cca3d8{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-53cf5d30{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-53cf5d44{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-53cf79b4{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-53cf79c8{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-53cf79d2{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-53cf79d3{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-53cf79dc{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-53cf79e6{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-53d50c6c"><thead><tr style="overflow-wrap:break-word;"><th class="cl-53cf79b4"><p class="cl-53cf5d30"><span class="cl-53cca3d8">city</span></p></th><th class="cl-53cf79b4"><p class="cl-53cf5d30"><span class="cl-53cca3d8">state</span></p></th><th class="cl-53cf79c8"><p class="cl-53cf5d44"><span class="cl-53cca3d8">distance from Mexico (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">Grand Isle</span></p></td><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">ME</span></p></td><td class="cl-53cf79d3"><p class="cl-53cf5d44"><span class="cl-53cca3d8">3,282.825</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">Caribou</span></p></td><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">ME</span></p></td><td class="cl-53cf79d3"><p class="cl-53cf5d44"><span class="cl-53cca3d8">3,250.330</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">Presque Isle</span></p></td><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">ME</span></p></td><td class="cl-53cf79d3"><p class="cl-53cf5d44"><span class="cl-53cca3d8">3,234.570</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">Oakfield</span></p></td><td class="cl-53cf79d2"><p class="cl-53cf5d30"><span class="cl-53cca3d8">ME</span></p></td><td class="cl-53cf79d3"><p class="cl-53cf5d44"><span class="cl-53cca3d8">3,175.577</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-53cf79dc"><p class="cl-53cf5d30"><span class="cl-53cca3d8">Island Falls</span></p></td><td class="cl-53cf79dc"><p class="cl-53cf5d30"><span class="cl-53cca3d8">ME</span></p></td><td class="cl-53cf79e6"><p class="cl-53cf5d44"><span class="cl-53cca3d8">3,162.285</span></p></td></tr></tbody></table></div>
+<div class="tabwid"><style>.cl-5ebc4756{}.cl-5eb78ca2{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5eb96446{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5eb96450{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5eb9704e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eb9704f{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eb97058{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eb97062{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eb9706c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eb9706d{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-5ebc4756"><thead><tr style="overflow-wrap:break-word;"><th class="cl-5eb9704e"><p class="cl-5eb96446"><span class="cl-5eb78ca2">city</span></p></th><th class="cl-5eb9704e"><p class="cl-5eb96446"><span class="cl-5eb78ca2">state</span></p></th><th class="cl-5eb9704f"><p class="cl-5eb96450"><span class="cl-5eb78ca2">distance from Mexico (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">Grand Isle</span></p></td><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">ME</span></p></td><td class="cl-5eb97062"><p class="cl-5eb96450"><span class="cl-5eb78ca2">3,282.825</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">Caribou</span></p></td><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">ME</span></p></td><td class="cl-5eb97062"><p class="cl-5eb96450"><span class="cl-5eb78ca2">3,250.330</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">Presque Isle</span></p></td><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">ME</span></p></td><td class="cl-5eb97062"><p class="cl-5eb96450"><span class="cl-5eb78ca2">3,234.570</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">Oakfield</span></p></td><td class="cl-5eb97058"><p class="cl-5eb96446"><span class="cl-5eb78ca2">ME</span></p></td><td class="cl-5eb97062"><p class="cl-5eb96450"><span class="cl-5eb78ca2">3,175.577</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eb9706c"><p class="cl-5eb96446"><span class="cl-5eb78ca2">Island Falls</span></p></td><td class="cl-5eb9706c"><p class="cl-5eb96446"><span class="cl-5eb78ca2">ME</span></p></td><td class="cl-5eb9706d"><p class="cl-5eb96450"><span class="cl-5eb78ca2">3,162.285</span></p></td></tr></tbody></table></div>
 </div>
 </div>
 </section>
@@ -338,7 +405,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"5 Cities Furthest From the Canadian Border"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="tabwid"><style>.cl-5415fdda{}.cl-540a0e44{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-540ecbb4{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-540ecbd2{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-540efde6{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-540efdfa{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-540efe04{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-540efe18{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-540efe19{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-540efe2c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-5415fdda"><thead><tr style="overflow-wrap:break-word;"><th class="cl-540efde6"><p class="cl-540ecbb4"><span class="cl-540a0e44">city</span></p></th><th class="cl-540efde6"><p class="cl-540ecbb4"><span class="cl-540a0e44">state</span></p></th><th class="cl-540efdfa"><p class="cl-540ecbd2"><span class="cl-540a0e44">distance from Canada (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">Guadalupe Guerra</span></p></td><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">TX</span></p></td><td class="cl-540efe18"><p class="cl-540ecbd2"><span class="cl-540a0e44">2,206.455</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">Sandoval</span></p></td><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">TX</span></p></td><td class="cl-540efe18"><p class="cl-540ecbd2"><span class="cl-540a0e44">2,205.641</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">Fronton</span></p></td><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">TX</span></p></td><td class="cl-540efe18"><p class="cl-540ecbd2"><span class="cl-540a0e44">2,204.794</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">Fronton Ranchettes</span></p></td><td class="cl-540efe04"><p class="cl-540ecbb4"><span class="cl-540a0e44">TX</span></p></td><td class="cl-540efe18"><p class="cl-540ecbd2"><span class="cl-540a0e44">2,202.118</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-540efe19"><p class="cl-540ecbb4"><span class="cl-540a0e44">Evergreen</span></p></td><td class="cl-540efe19"><p class="cl-540ecbb4"><span class="cl-540a0e44">TX</span></p></td><td class="cl-540efe2c"><p class="cl-540ecbd2"><span class="cl-540a0e44">2,202.020</span></p></td></tr></tbody></table></div>
+<div class="tabwid"><style>.cl-5edde294{}.cl-5ed866ca{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5eda735c{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5eda7370{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5eda820c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eda8216{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eda8217{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eda8220{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eda8221{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5eda822a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-5edde294"><thead><tr style="overflow-wrap:break-word;"><th class="cl-5eda820c"><p class="cl-5eda735c"><span class="cl-5ed866ca">city</span></p></th><th class="cl-5eda820c"><p class="cl-5eda735c"><span class="cl-5ed866ca">state</span></p></th><th class="cl-5eda8216"><p class="cl-5eda7370"><span class="cl-5ed866ca">distance from Canada (km)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">Guadalupe Guerra</span></p></td><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">TX</span></p></td><td class="cl-5eda8220"><p class="cl-5eda7370"><span class="cl-5ed866ca">2,206.455</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">Sandoval</span></p></td><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">TX</span></p></td><td class="cl-5eda8220"><p class="cl-5eda7370"><span class="cl-5ed866ca">2,205.641</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">Fronton</span></p></td><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">TX</span></p></td><td class="cl-5eda8220"><p class="cl-5eda7370"><span class="cl-5ed866ca">2,204.794</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">Fronton Ranchettes</span></p></td><td class="cl-5eda8217"><p class="cl-5eda735c"><span class="cl-5ed866ca">TX</span></p></td><td class="cl-5eda8220"><p class="cl-5eda7370"><span class="cl-5ed866ca">2,202.118</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-5eda8221"><p class="cl-5eda735c"><span class="cl-5ed866ca">Evergreen</span></p></td><td class="cl-5eda8221"><p class="cl-5eda735c"><span class="cl-5ed866ca">TX</span></p></td><td class="cl-5eda822a"><p class="cl-5eda7370"><span class="cl-5ed866ca">2,202.020</span></p></td></tr></tbody></table></div>
 </div>
 </div>
 </section>
@@ -549,7 +616,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">align</span>(<span class="at">align =</span> <span class="st">"center"</span>, <span class="at">j =</span> <span class="fu">c</span>(<span class="st">"Cities"</span>, <span class="st">"Population"</span>, <span class="st">"Percentage of Population"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">padding</span>(<span class="at">padding =</span> <span class="dv">15</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="tabwid"><style>.cl-5ab85afc{}.cl-5ab240d6{font-family:'Arial';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5ab240e0{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5ab4f952{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-5ab4f95c{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:15pt;padding-top:15pt;padding-left:15pt;padding-right:15pt;line-height: 1;background-color:transparent;}.cl-5ab50690{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5ab5069a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-5ab85afc"><thead><tr style="overflow-wrap:break-word;"><th class="cl-5ab50690"><p class="cl-5ab4f952"><span class="cl-5ab240d6">Cities</span></p></th><th class="cl-5ab50690"><p class="cl-5ab4f952"><span class="cl-5ab240d6">Population</span></p></th><th class="cl-5ab50690"><p class="cl-5ab4f952"><span class="cl-5ab240d6">Percentage of Population</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-5ab5069a"><p class="cl-5ab4f95c"><span class="cl-5ab240e0">13,892</span></p></td><td class="cl-5ab5069a"><p class="cl-5ab4f95c"><span class="cl-5ab240e0">263,691,572</span></p></td><td class="cl-5ab5069a"><p class="cl-5ab4f95c"><span class="cl-5ab240e0">66.55%</span></p></td></tr></tbody></table></div>
+<div class="tabwid"><style>.cl-6299fd6e{}.cl-6294d474{font-family:'Arial';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-6294d47e{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-6296dada{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6296dae4{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:15pt;padding-top:15pt;padding-left:15pt;padding-right:15pt;line-height: 1;background-color:transparent;}.cl-629701c2{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-629701cc{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-6299fd6e"><thead><tr style="overflow-wrap:break-word;"><th class="cl-629701c2"><p class="cl-6296dada"><span class="cl-6294d474">Cities</span></p></th><th class="cl-629701c2"><p class="cl-6296dada"><span class="cl-6294d474">Population</span></p></th><th class="cl-629701c2"><p class="cl-6296dada"><span class="cl-6294d474">Percentage of Population</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-629701cc"><p class="cl-6296dae4"><span class="cl-6294d47e">13,892</span></p></td><td class="cl-629701cc"><p class="cl-6296dae4"><span class="cl-6294d47e">263,691,572</span></p></td><td class="cl-629701cc"><p class="cl-6296dae4"><span class="cl-6294d47e">66.55%</span></p></td></tr></tbody></table></div>
 </div>
 </div>
 </section>
@@ -660,6 +727,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
