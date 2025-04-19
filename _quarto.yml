@@ -10,6 +10,7 @@ website:
         text: Home
       - lab-01.qmd
       - lab-02.qmd
+      - lab-03.qmd
 
 format:
   html:

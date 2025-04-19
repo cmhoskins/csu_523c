@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Lab 3 - Tessellations, Point-in-Polygon – 523 C</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+
+<script src="site_libs/leaflet-binding-2.2.2/leaflet.js"></script>
+
+<script src="site_libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+
+<script src="site_libs/leaflet-providers-plugin-2.2.2/leaflet-providers-plugin.js"></script>
+
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">523 C</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./lab-01.html"> 
+<span class="menu-text">Lab 1 - COVID Trends</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./lab-02.html"> 
+<span class="menu-text">Lab 2 - Distances and Projections</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./lab-03.html" aria-current="page"> 
+<span class="menu-text">Lab 3 - Tessellations, Point-in-Polygon</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lab 3 - Tessellations, Point-in-Polygon</h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Libraries:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AOI)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapview)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rmapshaper)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rmarkdown)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(units)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gghighlight)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leafem)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1:</h2>
+<p>Here we will prepare five tessellated surfaces from CONUS and write a function to plot them in a descriptive way.</p>
+<section id="step-1.1" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.1">Step 1.1</h3>
+<p>First, we need a spatial file of CONUS counties. For future area calculations we want these in an equal area projection (EPSG:5070).</p>
+<p>To achieve this:</p>
+<ul>
+<li><p>get an sf object of US counties (AOI::aoi_get(state = “conus”, county = “all”))</p></li>
+<li><p>transform the data to EPSG:5070</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>conus <span class="ot">&lt;-</span> AOI<span class="sc">::</span><span class="fu">aoi_get</span>(<span class="at">state =</span> <span class="st">"conus"</span>, <span class="at">county =</span> <span class="st">"all"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">5070</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-1.2" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.2">Step 1.2</h3>
+<p>For triangle based tessellations we need point locations to serve as our “anchors”.</p>
+<p>To achieve this:</p>
+<ul>
+<li><p>generate county centroids using st_centroid</p></li>
+<li><p>Since, we can only tessellate over a feature we need to combine or union the resulting 3,108 POINT features into a single MULTIPOINT feature</p></li>
+<li><p>Since these are point objects, the difference between union/combine is mute</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>centroid <span class="ot">&lt;-</span> conus <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_centroid</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_combine</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-1.3" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.3">Step 1.3</h3>
+<p>Make a voronoi tessellation over your county centroids (MULTIPOINT)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>voronoi <span class="ot">&lt;-</span> <span class="fu">st_voronoi</span>(centroid, <span class="at">envelope =</span> <span class="fu">st_union</span>(conus)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_collection_extract</span>(<span class="st">"POLYGON"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_cast</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Make a triangulated tessellation over your county centroids (MULTIPOINT)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>triangulated <span class="ot">&lt;-</span> <span class="fu">st_triangulate</span>(centroid) <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_collection_extract</span>(<span class="st">"POLYGON"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_cast</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Make a gridded coverage with n = 70, over your counties object</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(conus, <span class="at">n =</span> <span class="dv">70</span>, <span class="at">what =</span> <span class="st">"polygons"</span>, <span class="at">square =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span> ()) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_cast</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Make a hexagonal coverage with n = 70, over your counties object In addition to creating these 4 coverage’s we need to add an ID to each tile.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hex <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(conus, <span class="at">n =</span> <span class="dv">70</span>, <span class="at">what =</span> <span class="st">"polygons"</span>, <span class="at">square =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span> ()) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_cast</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-1.4" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.4">Step 1.4</h3>
+<p>If you plot the above tessellations you’ll see the triangulated surfaces produce regions far beyond the boundaries of CONUS.</p>
+<p>We need to cut these boundaries to CONUS border.</p>
+<p>To do this, we will call on st_intersection, but will first need a geometry of CONUS to serve as our differencing feature. We can get this by unioning our existing county boundaries.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>union <span class="ot">&lt;-</span> <span class="fu">st_union</span>(conus) </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>voronoi_union <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(voronoi, union)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>triangulated_union <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(triangulated, union)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>grid_union <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(grid, union)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>hex_union <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(hex, union)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-1.5" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.5">Step 1.5</h3>
+<p>With a single feature boundary, we must carefully consider the complexity of the geometry. Remember, the more points our geometry contains, the more computations needed for spatial predicates our differencing. For a task like ours, we do not need a finely resolved coastal boarder.</p>
+<p>To achieve this:</p>
+<ul>
+<li><p>Simplify your unioned border using the Visvalingam algorithm provided by rmapshaper::ms_simplify.</p></li>
+<li><p>Choose what percentage of vertices to retain using the keep argument and work to find the highest number that provides a shape you are comfortable with for the analysis:</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>simple <span class="ot">&lt;-</span> <span class="fu">ms_simplify</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  union,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">keep =</span> .<span class="dv">05</span>, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"vis"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">weighting =</span> <span class="fl">0.7</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">keep_shapes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">no_repair =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">snap =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">explode =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">drop_null_geometries =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">snap_interval =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<ul>
+<li>Once you are happy with your simplification, use the mapview::npts function to report the number of points in your original object, and the number of points in your simplified object.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mapview<span class="sc">::</span><span class="fu">npts</span>(union)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11292</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mapview<span class="sc">::</span><span class="fu">npts</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 577</code></pre>
+</div>
+</div>
+<ul>
+<li><p>How many points were you able to remove? What are the consequences of doing this computationally?</p>
+<ul>
+<li>10,715 points. This will make computation faster but we will lose detail.</li>
+</ul></li>
+<li><p>Finally, use your simplified object to crop the two triangulated tessellations with st_intersection:</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>voronoi_simple <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(voronoi, simple)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>triangulated_simple <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(triangulated, simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-1.6" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.6">Step 1.6</h3>
+<p>The last step is to plot your tessellations. We don’t want to write out 5 ggplots (or mindlessly copy and paste 😄)</p>
+<p>Instead, lets make a function that takes an sf object as arg1 and a character string as arg2 and returns a ggplot object showing arg1 titled with arg2.</p>
+<p>For this function:</p>
+<ul>
+<li><p>The name can be anything you chose, arg1 should take an sf object, and arg2 should take a character string that will title the plot</p></li>
+<li><p>In your function, the code should follow our standard ggplot practice where your data is arg1, and your title is arg2</p></li>
+<li><p>The function should also enforce the following:</p>
+<ul>
+<li><p>a white fill</p></li>
+<li><p>a navy border</p></li>
+<li><p>a size of 0.2</p></li>
+<li><p>`theme_void``</p></li>
+<li><p>a caption that reports the number of features in arg1</p></li>
+</ul></li>
+<li><p>You will need to paste character stings and variables together.</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tess_plot <span class="ot">=</span> <span class="cf">function</span>(object, title_text) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> object) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"navy"</span>, <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> title_text,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="fu">paste</span>(<span class="st">"number of features:"</span>, <span class="fu">nrow</span>(object)))</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tess_plot</span>(voronoi_simple, <span class="st">"voronoi plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-1.7" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.7">Step 1.7</h3>
+<p>Use your new function to plot each of your tessellated surfaces and the original county data (5 plots in total):</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tess_plot</span>(conus, <span class="st">"CONUS County Boundaries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tess_plot</span>(voronoi_simple, <span class="st">"Voronoi Tessellation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tess_plot</span>(triangulated_simple, <span class="st">"Triangulated Tessellation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tess_plot</span>(grid_union, <span class="st">"Square Grid Tessellation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-13-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tess_plot</span>(hex_union, <span class="st">"Hexagonal Grid Tessellation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-13-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2</h2>
+<p>In this question, we will write out a function to summarize our tessellated surfaces. Most of this should have been done in your daily assignments.</p>
+<section id="step-2.1" class="level3">
+<h3 class="anchored" data-anchor-id="step-2.1">Step 2.1</h3>
+<p>First, we need a function that takes a sf object and a character string and returns a data.frame.</p>
+<p>For this function:</p>
+<ul>
+<li><p>The function name can be anything you chose, arg1 should take an sf object, and arg2 should take a character string describing the object</p></li>
+<li><p>In your function, calculate the area of arg1; convert the units to km2; and then drop the units</p></li>
+<li><p>Next, create a data.frame containing the following:</p>
+<ul>
+<li><p>text from arg2</p></li>
+<li><p>the number of features in arg1</p></li>
+<li><p>the mean area of the features in arg1 (km2)</p></li>
+<li><p>the standard deviation of the features in arg1</p></li>
+<li><p>the total area (km2) of arg1</p></li>
+</ul></li>
+<li><p>Return this data.frame</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>tess_sum <span class="ot">&lt;-</span> <span class="cf">function</span>(sf_object, character_string) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  area_m2 <span class="ot">&lt;-</span> <span class="fu">st_area</span>(sf_object)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  area_km2 <span class="ot">&lt;-</span> <span class="fu">set_units</span>(area_m2, <span class="st">"km^2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>()</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">description =</span> character_string,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_features =</span> <span class="fu">length</span>(area_km2),</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_area_km2 =</span> <span class="fu">mean</span>(area_km2),</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_area_km2 =</span> <span class="fu">sd</span>(area_km2),</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_area_km2 =</span> <span class="fu">sum</span>(area_km2)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-2.2" class="level3">
+<h3 class="anchored" data-anchor-id="step-2.2">Step 2.2</h3>
+<p>Use your new function to summarize each of your tessellations and the original counties.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>conus_sum <span class="ot">&lt;-</span> <span class="fu">tess_sum</span>(conus, <span class="st">"CONUS Summary"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>conus_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    description num_features mean_area_km2 sd_area_km2 total_area_km2
+1 CONUS Summary         3108       2605.05    3443.712        8096496</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>voronoi_sum <span class="ot">&lt;-</span> <span class="fu">tess_sum</span>(voronoi_simple, <span class="st">"Voronoi Tessallation Summary"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>voronoi_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   description num_features mean_area_km2 sd_area_km2
+1 Voronoi Tessallation Summary         3108      2604.426    2917.817
+  total_area_km2
+1        8094557</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>triangulated_sum <span class="ot">&lt;-</span> <span class="fu">tess_sum</span>(triangulated_simple, <span class="st">"Triangulated Tessellation Summary"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>triangulated_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                        description num_features mean_area_km2 sd_area_km2
+1 Triangulated Tessellation Summary         6198      1290.368    1598.403
+  total_area_km2
+1        7997700</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>grid_sum <span class="ot">&lt;-</span> <span class="fu">tess_sum</span>(grid_union, <span class="st">"Square Grid Tessellation Summary"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>grid_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       description num_features mean_area_km2 sd_area_km2
+1 Square Grid Tessellation Summary         3131      2585.914      572.79
+  total_area_km2
+1        8096496</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>hex_sum <span class="ot">&lt;-</span> <span class="fu">tess_sum</span>(hex_union, <span class="st">"Hexagonal Grid Tessellation Summary"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>hex_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          description num_features mean_area_km2 sd_area_km2
+1 Hexagonal Grid Tessellation Summary         2310      3504.976    839.2546
+  total_area_km2
+1        8096496</code></pre>
+</div>
+</div>
+</section>
+<section id="step-2.3" class="level3">
+<h3 class="anchored" data-anchor-id="step-2.3">Step 2.3</h3>
+<p>Multiple data.frame objects can bound row-wise with bind_rows into a single data.frame</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>sum_all <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  conus_sum,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  voronoi_sum,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  triangulated_sum,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  grid_sum,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  hex_sum</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>sum_all <span class="ot">&lt;-</span> sum_all <span class="sc">%&gt;%</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Description =</span> description,</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Number of Features</span><span class="st">`</span> <span class="ot">=</span> num_features,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Mean Area (km²)</span><span class="st">`</span> <span class="ot">=</span> mean_area_km2,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">SD Area (km²)</span><span class="st">`</span> <span class="ot">=</span> sd_area_km2,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Area (km²)</span><span class="st">`</span> <span class="ot">=</span> total_area_km2</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-2.4" class="level3">
+<h3 class="anchored" data-anchor-id="step-2.4">Step 2.4</h3>
+<p>Once your 5 summaries are bound (2 tessellations, 2 coverage’s, and the raw counties) print the data.frame as a nice table using knitr/kableExtra.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>sum_all <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">format =</span> <span class="st">"html"</span>, <span class="at">caption =</span> <span class="st">"Comparison of Spatial Coverages and Tessellations"</span>, <span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<caption>Comparison of Spatial Coverages and Tessellations</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Number of Features</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean Area (km²)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SD Area (km²)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Total Area (km²)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CONUS Summary</td>
+<td style="text-align: right;">3108</td>
+<td style="text-align: right;">2605.05</td>
+<td style="text-align: right;">3443.71</td>
+<td style="text-align: right;">8096496</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Voronoi Tessallation Summary</td>
+<td style="text-align: right;">3108</td>
+<td style="text-align: right;">2604.43</td>
+<td style="text-align: right;">2917.82</td>
+<td style="text-align: right;">8094557</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Triangulated Tessellation Summary</td>
+<td style="text-align: right;">6198</td>
+<td style="text-align: right;">1290.37</td>
+<td style="text-align: right;">1598.40</td>
+<td style="text-align: right;">7997700</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Square Grid Tessellation Summary</td>
+<td style="text-align: right;">3131</td>
+<td style="text-align: right;">2585.91</td>
+<td style="text-align: right;">572.79</td>
+<td style="text-align: right;">8096496</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hexagonal Grid Tessellation Summary</td>
+<td style="text-align: right;">2310</td>
+<td style="text-align: right;">3504.98</td>
+<td style="text-align: right;">839.25</td>
+<td style="text-align: right;">8096496</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<p>Step 2.5 Comment on the traits of each tessellation. Be specific about how these traits might impact the results of a point-in-polygon analysis in the contexts of the modifiable areal unit problem and with respect computational requirements.</p>
+<p>Voronoi and triangulated tessellations are sensitive to the Modifiable Areal Unit Problem (MAUP), as the shape and size of their polygons depend on centroid placement, potentially misaligning with natural boundaries. Grid tessellations are less affected by MAUP but may misalign with natural features, while hexagonal tessellations offer a more uniform and less biased representation. Computationally, grid and hexagonal tessellations are more efficient than Voronoi and triangulated tessellations, which require more complex geometric calculations.</p>
+</section>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3:</h2>
+<p>The data we are going to analysis in this lab is from US Army Corp of Engineers National Dam Inventory (NID). This dataset documents ~91,000 dams in the United States and a variety of attribute information including design specifications, risk level, age, and purpose.</p>
+<p>For the remainder of this lab we will analysis the distributions of these dams (Q3) and their purpose (Q4) through using a point-in-polygon analysis.</p>
+<section id="step-3.1" class="level3">
+<h3 class="anchored" data-anchor-id="step-3.1">Step 3.1</h3>
+<p>In the tradition of this class - and true to data science/GIS work - you need to find, download, and manage raw data. While the raw NID data is no longer easy to get with the transition of the USACE services to ESRI Features Services, I staged the data in the resources directory of this class. To get it, navigate to that location and download the raw file into you lab data directory.</p>
+<ul>
+<li><p>Return to your RStudio Project and read the data in using the readr::read_csv</p></li>
+<li><p>After reading the data in, be sure to remove rows that don’t have location values (!is.na())</p></li>
+<li><p>Convert the data.frame to a sf object by defining the coordinates and CRS</p></li>
+<li><p>Transform the data to a CONUS AEA (EPSG:5070) projection - matching your tessellation</p></li>
+<li><p>Filter to include only those within your CONUS boundary</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dams <span class="ot">=</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'data/NID2019_U.csv'</span>) </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>usa <span class="ot">&lt;-</span> AOI<span class="sc">::</span><span class="fu">aoi_get</span>(<span class="at">state =</span> <span class="st">"conus"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_union</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">5070</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>dams2 <span class="ot">=</span> dams <span class="sc">%&gt;%</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(LATITUDE) ) <span class="sc">%&gt;%</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"LONGITUDE"</span>, <span class="st">"LATITUDE"</span>), <span class="at">crs =</span> <span class="dv">4236</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">5070</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_filter</span>(usa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="step-3.2" class="level2">
+<h2 class="anchored" data-anchor-id="step-3.2">Step 3.2</h2>
+<p>Step 3.2 Following the in-class examples develop an efficient point-in-polygon function that takes:</p>
+<ul>
+<li><p>points as arg1,</p></li>
+<li><p>polygons as arg2,</p></li>
+<li><p>The name of the id column as arg3</p></li>
+</ul>
+<p>The function should make use of spatial and non-spatial joins, sf coercion and dplyr::count. The returned object should be input sf object with a column - n - counting the number of points in each tile.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>point_poly <span class="ot">&lt;-</span> <span class="cf">function</span>(points, polygons, id) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  joined <span class="ot">&lt;-</span> <span class="fu">st_join</span>(points, polygons[id], <span class="at">left =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  counts <span class="ot">&lt;-</span> joined <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="sc">!!</span><span class="fu">sym</span>(id), <span class="at">name =</span> <span class="st">"n"</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  polygons <span class="sc">%&gt;%</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(counts, <span class="at">by =</span> id) <span class="sc">%&gt;%</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(n), <span class="dv">0</span>, n))</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="step-3.3" class="level3">
+<h3 class="anchored" data-anchor-id="step-3.3">Step 3.3</h3>
+<p>Apply your point-in-polygon function to each of your five tessellated surfaces where:</p>
+<ul>
+<li><p>Your points are the dams</p></li>
+<li><p>Your polygons are the respective tessellation</p></li>
+<li><p>The id column is the name of the id columns you defined</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dams_conus <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams2, conus, <span class="st">"fip_code"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>dams_voronoi <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams2, voronoi_simple, <span class="st">"id"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>dams_triangulated <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams2, triangulated_simple, <span class="st">"id"</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>dams_grid <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams2, grid_union, <span class="st">"id"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>dams_hex <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams2, hex_union, <span class="st">"id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-3.4" class="level3">
+<h3 class="anchored" data-anchor-id="step-3.4">Step 3.4</h3>
+<p>Lets continue the trend of automating our repetitive tasks through function creation. This time make a new function that extends your previous plotting function.</p>
+<p>For this function:</p>
+<ul>
+<li><p>The name can be anything you chose, arg1 should take an sf object, and arg2 should take a character string that will title the plot</p></li>
+<li><p>The function should also enforce the following:</p>
+<ul>
+<li><p>the fill aesthetic is driven by the count column n</p></li>
+<li><p>the col is NA</p></li>
+<li><p>the fill is scaled to a continuous viridis color ramp</p></li>
+<li><p>theme_void</p></li>
+<li><p>a caption that reports the number of dams in arg1 (e.g.&nbsp;sum(n))</p>
+<ul>
+<li>You will need to paste character strings and variables together.</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>dam_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(object, title_text) {</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  object <span class="ot">&lt;-</span> object <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">st_geometry_type</span>(.) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"POLYGON"</span>, <span class="st">"MULTIPOLYGON"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">st_is_empty</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">st_is_valid</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">as.numeric</span>(n))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> object) <span class="sc">+</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> n), <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"viridis"</span>, <span class="at">na.value =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title_text,</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="fu">paste</span>(<span class="st">"total number of dams:"</span>, <span class="fu">sum</span>(object<span class="sc">$</span>n, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">"dam count"</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-3.5" class="level3">
+<h3 class="anchored" data-anchor-id="step-3.5">Step 3.5</h3>
+<p>Apply your plotting function to each of the 5 tessellated surfaces with Point-in-Polygon counts:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_conus, <span class="st">"Dam Count by County"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_voronoi, <span class="st">"Dam Count by Voronoi Tessellation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_triangulated, <span class="st">"Dam Count by Triangulated Tessellation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-22-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_grid, <span class="st">"Dam Count by Square Grid"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-22-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_hex, <span class="st">"Dam Count by Hexagonal Grid"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-22-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3.6" class="level3">
+<h3 class="anchored" data-anchor-id="step-3.6">Step 3.6</h3>
+<p>Comment on the influence of the tessellated surface in the visualization of point counts. How does this related to the MAUP problem. Moving forward you will only use one tessellation, which will you chose and why?</p>
+<p>I’m choosing the hexagonal grid tessellation because it gives a more even and balanced view of point counts, making it easier to see concentration areas without the distortion you might get with Voronoi or triangulated tessellations. The uniform shape helps avoid the issues of the Modifiable Areal Unit Problem (MAUP), which can mess with analysis when shapes vary too much. It also works well for visualizing the concentration in the Midwest and South, and it’s more computationally efficient for larger datasets.</p>
+</section>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
+<section id="step-4.1" class="level3">
+<h3 class="anchored" data-anchor-id="step-4.1">Step 4.1</h3>
+<ul>
+<li><p>Your task is to create point-in-polygon counts for at least 4 of the follwing dam purposes:</p>
+<ul>
+<li><p>I Irrigation</p></li>
+<li><p>H Hydroelectric</p></li>
+<li><p>C Flood Control</p></li>
+<li><p>N Navigation</p></li>
+<li><p>S Water Supply</p></li>
+<li><p>R Recreation</p></li>
+<li><p>P Fire Protection</p></li>
+<li><p>F Fish and Wildlife</p></li>
+<li><p>D Debris Control</p></li>
+<li><p>T Tailings</p></li>
+<li><p>G Grade Stabilization</p></li>
+<li><p>O Other</p></li>
+</ul></li>
+<li><p>You will use grepl to filter the complete dataset to those with your chosen purpose</p></li>
+<li><p>Remember that grepl returns a boolean if a given pattern is matched in a string</p></li>
+<li><p>grepl is vectorized so can be used in dplyr::filter</p></li>
+</ul>
+<p>For your analysis, choose at least four of the above codes, and describe why you chose them. Then for each of them, create a subset of dams that serve that purpose using dplyr::filter and grepl</p>
+<ul>
+<li>I chose Irrigation, Hydroelectric, Flood Control, and Water Supply. I chose these because they are uses for dams that I am most familiar with.</li>
+</ul>
+<p>Finally, use your point-in-polygon function to count each subset across your elected tessellation</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>dams_i <span class="ot">&lt;-</span> dams2 <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"I"</span>, PURPOSES))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>dams_h <span class="ot">&lt;-</span> dams2 <span class="sc">%&gt;%</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"H"</span>, PURPOSES))</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>dams_c <span class="ot">&lt;-</span> dams2 <span class="sc">%&gt;%</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"C"</span>, PURPOSES))</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>dams_s <span class="ot">&lt;-</span> dams2 <span class="sc">%&gt;%</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"S"</span>, PURPOSES))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>dams_i_hex <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams_i, hex_union, <span class="st">"id"</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>dams_h_hex <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams_h, hex_union, <span class="st">"id"</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>dams_c_hex <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams_c, hex_union, <span class="st">"id"</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>dams_s_hex <span class="ot">&lt;-</span> <span class="fu">point_poly</span>(dams_s, hex_union, <span class="st">"id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-4.2" class="level3">
+<h3 class="anchored" data-anchor-id="step-4.2">Step 4.2</h3>
+<ul>
+<li><p>Now use your plotting function from Q3 to map these counts.</p></li>
+<li><p>But! you will use gghighlight to only color those tiles where the count (n) is greater then the (mean + 1 standard deviation) of the set</p></li>
+<li><p>Since your plotting function returns a ggplot object already, the gghighlight call can be added “+” directly to the function.</p></li>
+<li><p>The result of this exploration is to highlight the areas of the country with the most</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>mean_sd_i <span class="ot">&lt;-</span> <span class="fu">mean</span>(dams_i_hex<span class="sc">$</span>n) <span class="sc">+</span> <span class="fu">sd</span>(dams_i_hex<span class="sc">$</span>n)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>mean_sd_h <span class="ot">&lt;-</span> <span class="fu">mean</span>(dams_h_hex<span class="sc">$</span>n) <span class="sc">+</span> <span class="fu">sd</span>(dams_h_hex<span class="sc">$</span>n)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>mean_sd_c <span class="ot">&lt;-</span> <span class="fu">mean</span>(dams_c_hex<span class="sc">$</span>n) <span class="sc">+</span> <span class="fu">sd</span>(dams_c_hex<span class="sc">$</span>n)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>mean_sd_s <span class="ot">&lt;-</span> <span class="fu">mean</span>(dams_s_hex<span class="sc">$</span>n) <span class="sc">+</span> <span class="fu">sd</span>(dams_s_hex<span class="sc">$</span>n)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_i_hex, <span class="st">"Irrigation Dams"</span>) <span class="sc">+</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gghighlight</span>(n <span class="sc">&gt;</span> mean_sd_i, <span class="at">label_key =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_h_hex, <span class="st">"Hydroelectric Dams"</span>) <span class="sc">+</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gghighlight</span>(n <span class="sc">&gt;</span> mean_sd_h, <span class="at">label_key =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_c_hex, <span class="st">"Flood Control Dams"</span>) <span class="sc">+</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gghighlight</span>(n <span class="sc">&gt;</span> mean_sd_c, <span class="at">label_key =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-25-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dam_plot</span>(dams_s_hex, <span class="st">"Water Supply Dams"</span>) <span class="sc">+</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gghighlight</span>(n <span class="sc">&gt;</span> mean_sd_s, <span class="at">label_key =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab-03_files/figure-html/unnamed-chunk-25-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-4.3" class="level3">
+<h3 class="anchored" data-anchor-id="step-4.3">Step 4.3</h3>
+<p>Comment of geographic distribution of dams you found. Does it make sense? How might the tessellation you chose impact your findings? How does the distribution of dams coincide with other geographic factors such as river systems, climate, ect?</p>
+</section>
+</section>
+<section id="question-5" class="level2">
+<h2 class="anchored" data-anchor-id="question-5">Question 5:</h2>
+<p>You have also been asked to identify the largest, at risk, flood control dams in the country</p>
+<p>You must also map the Mississippi River System - This data is available here - Download the shapefile and unzip it into your data directory. - Use read_sf to import this data and filter it to only include the Mississippi SYSTEM</p>
+<p>To achieve this:</p>
+<p>Create an interactive map using leaflet to show the largest (NID_STORAGE); high-hazard (HAZARD == “H”) dam in each state</p>
+<ul>
+<li><p>The markers should be drawn as opaque, circle markers, filled red with no border, and a radius set equal to the (NID_Storage / 1,500,000)</p></li>
+<li><p>The map tiles should be selected from any of the tile providers</p></li>
+<li><p>A popup table should be added using leafem::popup and should only include the dam name, storage, purposes, and year completed</p></li>
+<li><p>The Mississippi system should be added at a Polyline feature</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>major_rivers <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/major_rivers/MajorRivers.shp"</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>miss <span class="ot">&lt;-</span> major_rivers <span class="sc">%&gt;%</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SYSTEM <span class="sc">==</span> <span class="st">"Mississippi"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>H <span class="ot">&lt;-</span> dams2 <span class="sc">%&gt;%</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">STATE_CODE =</span> <span class="fu">substr</span>(NIDID, <span class="dv">1</span>, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(HAZARD <span class="sc">==</span> <span class="st">"H"</span>, <span class="fu">grepl</span>(<span class="st">"C"</span>, PURPOSES)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(STATE_CODE) <span class="sc">%&gt;%</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> NID_STORAGE, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>H<span class="sc">$</span>popup <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue_data</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  H,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"&lt;b&gt;{DAM_NAME}&lt;/b&gt;&lt;br/&gt;"</span>,</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Storage: {format(NID_STORAGE, big.mark = ',')} acre-ft&lt;br/&gt;"</span>,</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Purposes: {PURPOSES}&lt;br/&gt;"</span>,</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Year Completed: {YEAR_COMPLETED}"</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addProviderTiles</span>(<span class="st">"CartoDB.Positron"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addPolylines</span>(<span class="at">data =</span> miss, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">weight =</span> <span class="dv">2</span>, <span class="at">opacity =</span> <span class="fl">0.8</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> H,</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="sc">~</span>NID_STORAGE <span class="sc">/</span> <span class="dv">1500000</span>,</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="cn">NA</span>,</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fillColor =</span> <span class="st">"red"</span>,</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">fillOpacity =</span> <span class="fl">0.8</span>,</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="sc">~</span>DAM_NAME,</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span>popup</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-d6b782e411e645d24f2b" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-d6b782e411e645d24f2b">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addPolylines","args":[[[[{"lng":[-106.3788953636364,-106.3294673636364,-106.3458653636364,-106.0222433636364,-106.0563983636364,-105.7347473636364,-105.3650183636364,-104.7694703636364,-103.6925033636364,-103.5433553636364,-103.4616893636364,-103.2797363636364,-103.1025533636364,-103.0887923636364,-103.0475453636364,-103.0246313636364,-103.0108883636364,-102.9127253636364,-102.5655593636364,-102.2369513636364,-101.3566613636364,-101.0480693636364,-100.4063963636364,-99.98345936363637,-99.60667436363637,-99.25446836363636,-98.80334336363637,-98.51917736363637,-97.40389736363636,-97.17251636363636,-97.12028036363637,-97.02390836363637,-96.94445636363636,-96.91002236363637,-96.79862936363637,-97.05334736363636,-97.03501436363636,-96.89640536363636,-96.91445936363637,-96.99696236363637,-96.95667836363637,-96.74806736363637,-96.69501236363637,-96.53308436363636,-96.54974336363637,-96.46612436363637,-96.25447136363637,-96.26057336363637,-96.01918436363637,-95.94862436363637,-95.84778836363637,-95.67029036363637,-95.60863136363636,-95.30101136363636,-95.23169336363637,-95.25836036363637,-95.04686936363636,-94.86390836363637,-94.72278836363637,-94.66113836363637,-94.59389936363637,-94.51113536363637,-94.41056936363637,-94.31363036363636,-94.14641036363636,-94.15223336363637,-93.84335336363637,-93.77919236363637,-93.47001536363636,-93.40280336363637,-93.23279336363636,-93.06029036363637,-92.86641236363637,-92.67029336363636,-92.56752236363637,-92.54696636363637,-92.60612336363637,-92.48223836363637,-92.37611936363636,-92.16641036363637,-92.12583836363636,-91.97696036363637,-91.94084336363636,-91.76917736363637,-91.45613036363636,-91.41334436363637,-91.16890436363637,-91.06774436363636],"lat":[39.36165154545454,39.35275954545454,39.22637254545455,38.73359554545454,38.58971254545454,38.36719654545454,38.49332254545454,38.27608954545455,38.08859254545454,37.99748554545454,37.99387654545455,38.08193254545454,38.07747754545455,38.08665754545455,38.09581954545454,38.09123854545454,38.08665754545455,38.07035854545455,38.10749254545454,38.08137454545454,37.88192554545454,37.99582054545454,37.81582054545455,37.74269554545454,37.66915654545455,38.03803954545455,38.33692954545455,38.31888454545454,37.78888354545455,37.36970854545455,37.11804154545454,37.04415154545455,37.03609654545455,36.81470554545455,36.77165854545455,36.67554754545454,36.59692354545455,36.59137054545455,36.54747754545455,36.52497754545454,36.46137454545454,36.56220154545455,36.43693054545455,36.40220854545455,36.31082254545455,36.32942554545455,36.22498054545455,36.15387154545454,36.14526754545455,35.99720854545455,35.93442454545454,35.92192354545454,35.77804054545454,35.78260354545454,35.72386954545454,35.61192754545454,35.47024054545455,35.35748854545455,35.35276354545454,35.27971054545454,35.33525854545454,35.29804354545454,35.44054054545455,35.36553454545454,35.37053854545454,35.43497854545455,35.48471254545455,35.39526154545454,35.41886854545455,35.34275554545454,35.29137454545454,35.16469954545455,35.16804754545455,35.08165654545454,35.11054654545455,35.07999154545454,34.99776754545454,34.94664754545455,34.79832754545455,34.72858654545454,34.43998354545455,34.24443154545454,34.29470554545454,34.18054954545455,34.08525754545455,34.00832554545455,33.94803454545454,33.79024654545454]}]],[[{"lng":[-95.02364036363636,-94.98972836363636,-94.93130936363637,-94.92069836363636,-94.86363836363637,-94.84938236363637,-94.63960136363637,-94.50714836363636,-94.33603136363637,-94.29799736363637,-94.26473336363637,-94.18866536363636,-94.14590636363637,-94.10312036363636,-94.07458136363637,-94.03528736363637,-93.92000636363636,-93.80111636363637,-93.78946136363636,-93.68278436363637,-93.45280736363637,-93.29057336363637,-93.38000636363637,-93.36418436363637,-93.61139636363637,-93.70807436363637,-94.03779836363637,-94.09000736363636,-94.36195136363636,-94.40891336363637,-94.40418836363637,-94.04751836363637,-93.79667036363637,-93.59724836363637,-93.31029236363636,-93.19636136363637,-93.09529136363636,-93.02418236363637,-92.81472536363637,-92.59291136363636,-92.54830736363637,-92.50528736363637,-92.41500836363636,-92.37777536363636,-92.36278136363637,-92.34056036363637,-92.33195636363637,-92.32250636363636,-92.31304736363637,-92.30444336363637,-92.27084636363637,-92.25500636363637,-92.21888936363636,-92.20278836363637,-92.14999436363637,-92.12998736363636,-92.12537936363637,-91.94667536363637,-91.82363636363637,-91.34892236363636,-91.33389236363637,-91.31555036363636,-91.28750636363637,-91.28139536363636,-91.26834536363637,-91.26445736363637,-91.26585236363637,-91.26585236363637,-91.24607936363637,-91.22258936363636,-91.23210236363637,-91.18756136363636,-91.16305436363636,-91.12054736363636,-91.09499636363637,-91.08168536363637,-91.07889536363636,-91.08528536363637,-91.09555436363637,-91.10749736363637,-91.11610136363636,-91.12610036363637,-91.14445136363636,-91.15556636363637,-91.16750036363636,-91.17332336363637,-91.17582536363636,-91.17222536363637,-91.16302736363636,-91.15165136363636,-91.03946636363636,-90.70057136363637,-90.63056936363637,-90.64807436363637,-90.41640536363637,-90.40724336363637,-90.17333336363636,-90.14001536363637,-90.19473536363637,-90.30501236363637,-90.34918436363637,-90.68639636363636,-91.04112236363636,-91.09667936363637,-90.96113936363636,-90.94611836363637,-91.09169336363637,-91.15640336363637,-91.41057236363636,-91.37417636363637,-91.44029036363636,-91.51307336363637,-91.49501036363637,-91.37889236363637,-90.79974236363637,-90.69361436363637,-90.62529536363637,-90.56836136363637,-90.47868536363637,-90.27890336363636,-90.13223936363637,-90.12997136363637,-90.38195336363637,-90.34390136363636,-90.04140236363637,-89.95611836363636,-89.73139736363636,-89.66334836363636,-89.52862736363636,-89.52085136363637,-89.44362236363636,-89.52113936363637,-89.38613936363636,-89.28779636363636,-89.28390836363637,-89.12165636363636,-89.17778936363636,-89.22278936363637,-89.38084736363636,-89.46029936363637,-89.49890036363637,-89.49528236363636,-89.57557136363637,-89.52723236363637,-89.61584636363636,-89.57723636363636,-89.68779236363636,-89.60667536363637,-89.72861636363636,-89.67028736363636,-89.73139736363636,-89.77918736363637,-89.72085836363637,-89.74667036363637,-89.94445436363637,-89.90001236363636,-89.95474136363637,-89.92112636363636,-90.10251236363636,-90.08057936363636,-90.31140236363636,-90.27280136363636,-90.45863336363637,-90.46473536363636,-90.55334936363637,-90.59974436363636,-90.58584836363637,-90.77029436363637,-90.77057336363637,-90.82751636363636,-90.86001536363636,-90.95863736363637,-90.87501836363637,-90.88167836363637,-91.08974036363637,-91.05209336363636,-91.06774436363636,-91.22751236363636,-91.15445936363636,-91.14946436363637,-91.23333536363637,-91.12889036363637,-91.16502536363636,-91.10974736363637,-91.09335836363637,-91.16502536363636,-91.07446736363637,-91.14613436363636,-91.13807036363637,-91.07196536363637,-91.16611436363637,-91.09807436363637,-91.11001736363636,-90.91802036363637,-91.09556336363637,-91.08363836363637,-91.34363036363636,-91.43861636363637,-91.53112736363637,-91.49139236363636,-91.52807636363637,-91.64613836363637,-91.57391336363636,-91.65696536363636,-91.65529136363637,-91.51724936363637,-91.58031236363637,-91.37806436363637,-91.25112836363637,-91.27919036363636,-91.20779336363637,-91.20112436363637,-91.24500836363637,-91.15307336363637,-91.22141036363637,-91.11363536363636,-91.13446136363636,-91.01891036363637,-91.02306836363637,-90.85361636363636,-90.82585136363636,-90.51113936363636,-90.32334536363636,-90.24307436363637,-90.12167336363636,-90.04140236363637,-89.94056636363636,-89.91446636363636,-89.97251636363637,-90.01946936363636,-89.95724336363637,-89.61445136363636,-89.60000636363637,-89.49278036363637,-89.43057236363637,-89.28529436363637,-89.25474836363637,-89.30045936363636,-89.41075436363637],"lat":[47.15609254545455,47.31859654545455,47.37176854545455,47.40668854545455,47.48274754545455,47.49225154545454,47.43069154545454,47.44948354545455,47.40668854545455,47.41145854545454,47.42096254545455,47.45897854545455,47.46373954545455,47.45422654545454,47.43046654545454,47.35471354545455,47.29387354545454,47.30858854545455,47.21304454545454,47.25443554545455,47.18331754545455,47.01665554545455,46.88526454545454,46.79582254545455,46.67721154545455,46.54998754545455,46.56721354545454,46.45997854545454,46.27748554545455,46.22525854545454,45.93525154545454,45.41831854545455,45.30832054545454,45.29443354545455,45.14387254545455,44.89981054545455,44.94442354545455,44.80637254545454,44.75222854545455,44.61245854545455,44.58756454545455,44.57441554545455,44.56443454545454,44.56221154545454,44.55832354545455,44.54610154545454,44.53861354545455,44.52555454545455,44.50609654545455,44.49304654545454,44.46832354545455,44.45888254545455,44.44193554545455,44.43859654545455,44.43220654545454,44.42443954545454,44.42010154545455,44.33359354545454,44.16915454545454,43.91844154545455,43.89193654545455,43.86554854545455,43.83832354545455,43.82971954545454,43.80638254545455,43.79027254545455,43.78423354545455,43.72513054545454,43.58818654545454,43.49471254545454,43.45192654545455,43.35767854545454,43.35527554545454,43.33610554545455,43.31471254545455,43.29694654545454,43.28638054545454,43.26082954545455,43.24027354545455,43.22637754545455,43.21888054545455,43.21305754545454,43.19804554545454,43.18471654545454,43.16443954545455,43.14694354545454,43.12193254545455,43.09887454545454,43.07851654545454,42.99739054545454,42.72748054545455,42.64887454545454,42.54942454545455,42.47886454545455,42.31860154545455,42.25304554545455,42.12304054545455,41.99304454545454,41.81776054545454,41.75026054545454,41.59053754545454,41.45415154545454,41.40498454545455,41.21137654545455,41.10526654545455,40.98998554545454,40.83497854545454,40.66248454545454,40.56665254545454,40.40164654545455,40.37664454545455,40.22442754545454,40.01388154545455,39.72581854545455,39.30942454545454,38.97248254545455,38.88803554545455,38.87803654545454,38.95940554545455,38.92608754545454,38.84748154545455,38.81014054545455,38.28359554545454,38.20470154545455,37.97553454545454,37.96047754545454,37.83748354545454,37.73942854545455,37.68276454545454,37.53359854545455,37.42248454545454,37.26748654545454,37.04915554545455,36.99470554545454,37.08803554545454,36.97756054545454,36.66144454545455,36.57665554545455,36.62165554545454,36.45970954545455,36.44859454545455,36.54637954545455,36.54443554545454,36.38193154545454,36.34469854545454,36.25165654545454,36.24332254545454,36.14192854545454,36.00748654545455,35.89220554545454,35.91469654545454,35.87275654545454,35.84303854545454,35.81053954545454,35.73108754545455,35.63665054545455,35.59776154545454,35.53859554545455,35.38220254545454,35.17304254545454,35.01637954545455,34.91053954545455,34.82359954545455,34.73998054545455,34.73971054545455,34.63720954545455,34.42247854545455,34.37165554545454,34.27858654545454,34.28248354545455,34.20888154545454,34.15303654545455,34.10138554545454,34.05442354545455,33.99053254545455,33.95770054545455,33.79024654545454,33.67304854545454,33.63387154545455,33.59526154545454,33.56109754545455,33.47359054545455,33.29971054545454,33.27192754545454,33.16858954545454,32.96914954545455,32.91693154545454,32.81693254545454,32.74220554545455,32.69915854545454,32.66692954545454,32.56192654545455,32.47248454545454,32.29799254545454,32.11276354545455,32.01220654545454,31.84638154545454,31.56527554545455,31.47888454545454,31.39888354545455,31.28832754545454,31.26887854545455,31.07221054545455,30.99276754545455,30.94637254545454,30.87554254545454,30.74665354545454,30.75582454545454,30.57443854545455,30.50304154545454,30.51720754545455,30.40915354545455,30.35887954545455,30.33637954545454,30.29498854545455,30.26166154545455,30.19221754545455,30.19054354545454,30.12999154545454,30.06499354545455,30.00415354545455,30.05638054545454,29.94388054545454,29.97193354545454,29.92165054545455,29.95582354545454,29.92609654545455,29.88416554545454,29.88332854545454,29.77999054545455,29.65943554545455,29.46332554545454,29.40249454545454,29.34832354545454,29.35970854545455,29.21859754545455,29.15665054545455,29.08177954545454,28.92983254545454]}]],[[{"lng":[-110.5544543636364,-110.6122253636364,-110.7086333636364,-110.7227813636364,-110.8739003636364,-111.0286373636364,-111.1089893636364,-111.1548263636364,-111.1869113636364,-111.2052263636364,-111.2373203636364,-111.2556443636364,-111.3060443636364,-111.4739123636364,-111.5419613636364,-111.7219433636364,-111.4433303636364,-111.4459403636364,-111.3719423636364,-111.5088323636364,-111.5088323636364,-111.5308733636364,-111.5473883636364,-111.5914613636364,-111.6465413636364,-111.6957983636364,-111.9230753636364,-111.8864003636364,-112.0000253636364,-111.9144623636364,-111.7452893636364,-111.5014163636364,-111.3391913636364,-111.3097343636364,-111.2872253636364,-111.0280613636364,-110.8644593636364,-110.6472443636364,-110.1261083636364,-110.0302943636364,-110.0361353636364,-109.8441833636364,-109.7044673636364,-109.4955593636364,-109.4014103636364,-109.2350273636364,-108.9499973636364,-108.9258413636364,-108.6538973636364,-108.1969313636364,-108.1094153636364,-108.0873923636364,-107.9992373636364,-107.9496473636364,-107.9110733636364,-107.8339343636364,-107.6741483636364,-107.6521163636364,-107.5750043636364,-107.5584533636364,-107.4097013636364,-107.2939883636364,-107.2168763636364,-107.1948353636364,-106.9799423636364,-106.8917963636364,-106.7044793636364,-106.6162973636364,-106.5502013636364,-106.5061193636364,-106.4179733636364,-106.4108093636364,-106.3764023636364,-106.1158343636364,-106.0913993636364,-105.4603013636364,-104.9144603636364,-104.8758323636364,-104.6364053636364,-104.4355613636364,-104.2219463636364,-104.2078703636364,-104.1601883636364,-104.0986373636364,-104.0484263636364,-103.9640153636364,-103.8663203636364,-103.7858153636364,-103.7403113636364,-103.7403113636364,-103.7237963636364,-103.6356323636364,-103.5860423636364,-103.5640103636364,-103.5364523636364,-103.5364523636364,-103.5034223636364,-103.4813723636364,-103.4482973636364,-103.2444473636364,-103.2279143636364,-103.2114083636364,-103.1838503636364,-103.1122283636364,-102.9634763636364,-102.8422553636364,-102.7375853636364,-102.6604283636364,-102.5557583636364,-102.5777903636364,-102.5998403636364,-102.6328973636364,-102.6383963636364,-102.6383963636364,-102.6328973636364,-102.6108743636364,-102.5888153636364,-102.4455713636364,-102.4125143636364,-102.3739403636364,-102.3463913636364,-102.3463913636364,-102.3353753636364,-102.3133343636364,-102.2968193636364,-102.2637443636364,-102.2527463636364,-102.2527463636364,-102.2306963636364,-102.1866233636364,-102.0488873636364,-101.9772473636364,-101.8835933636364,-101.7623903636364,-101.5915793636364,-101.4924173636364,-101.3711963636364,-101.3491643636364,-101.3987543636364,-101.4311183636364,-101.3491823636364,-101.2286183636364,-101.1244523636364,-100.9725143636364,-100.9969673636364,-100.8908483636364,-100.9116833636364,-100.7800673636364,-100.7431043636364,-100.6769903636364,-100.5888353636364,-100.5778373636364,-100.5778373636364,-100.5612773636364,-100.5502793636364,-100.5502793636364,-100.5612773636364,-100.5668033636364,-100.5833273636364,-100.6163933636364,-100.6274003636364,-100.6274003636364,-100.5943613636364,-100.4896823636364,-100.4456003636364,-100.3849853636364,-100.3243883636364,-100.3188623636364,-100.3298873636364,-100.3905023636364,-100.4180423636364,-100.4345753636364,-100.4841653636364,-100.4676323636364,-100.4400923636364,-100.3960103636364,-100.3464203636364,-100.2858233636364,-100.2747983636364,-100.2858233636364,-100.3243883636364,-100.3849853636364,-100.4070263636364,-100.4290673636364,-100.4180423636364,-100.4070263636364,-100.4125343636364,-100.4235683636364,-100.4565983636364,-100.5172133636364,-100.5502793636364,-100.6108763636364,-100.6329173636364,-100.6880153636364,-100.7155463636364,-100.7320973636364,-100.7210723636364,-100.6935053636364,-100.6604663636364,-100.6494413636364,-100.6439513636364,-100.6439513636364,-100.6329173636364,-100.6163933636364,-100.5833273636364,-100.5612773636364,-100.5502793636364,-100.5447713636364,-100.5612773636364,-100.5668033636364,-100.5502793636364,-100.4565983636364,-100.4125343636364,-100.3849853636364,-100.3458623636364,-99.92028836363637,-99.94056536363637,-99.85390436363636,-99.62611436363636,-99.71057036363636,-99.60167936363636,-99.56362736363637,-99.36029036363637,-99.35077736363637,-99.31751336363637,-99.31751336363637,-99.36029036363637,-99.37455536363636,-99.41258036363637,-99.42209336363636,-99.46487036363636,-99.46010936363636,-99.44586236363637,-99.43158836363637,-99.38405936363637,-99.36981236363637,-99.36029036363637,-99.29374436363636,-99.28900136363637,-99.29374436363636,-99.30801836363636,-99.30325736363636,-99.25096736363636,-99.22719836363636,-99.20819036363636,-99.17966936363636,-99.16066136363636,-99.11310536363636,-98.97051836363637,-98.88020336363637,-98.87070836363637,-98.69007836363636,-98.66156636363637,-98.60450636363636,-98.54822936363637,-98.48925236363637,-98.40835136363637,-98.02919036363636,-97.94666936363636,-97.88000636363637,-97.27845536363637,-97.12973036363637,-96.70223936363637,-96.62806136363636,-96.37918436363637,-96.40891136363636,-96.33474236363637,-96.35334536363636,-96.25251836363637,-96.14362736363637,-96.15251036363637,-96.05944136363637,-96.08556836363637,-95.99334536363637,-95.99945636363637,-95.92029236363636,-95.95474436363637,-95.87806436363637,-95.92472936363637,-95.85557336363637,-95.86363736363637,-95.82612536363636,-95.87194436363637,-95.77668836363637,-95.76530336363636,-95.67001136363636,-95.65612436363637,-95.47472936363637,-95.42085536363636,-95.10084236363636,-94.95778736363637,-94.86974036363637,-94.88613836363636,-94.96056836363637,-95.10835736363637,-95.03946236363636,-94.89836036363637,-94.89557036363637,-94.82168036363636,-94.62042236363637,-94.37806136363636,-94.31363036363636,-94.09362536363636,-93.95918336363637,-93.87194636363637,-93.51473636363636,-93.49445936363637,-93.41251436363636,-93.35000936363636,-93.27530036363636,-93.22696136363636,-93.20863736363637,-92.92611836363636,-92.85751136363636,-92.93444336363636,-92.86611536363637,-92.57807936363636,-92.50668236363637,-92.36028836363637,-92.08170236363637,-92.03827736363637,-91.76696336363636,-91.57781036363636,-91.34641136363636,-91.23250736363637,-90.96280436363637,-90.80557436363637,-90.71113736363637,-90.56974736363637,-90.46779536363637,-90.37667936363637,-90.34308236363637,-90.12997136363637],"lat":[44.76081454545454,44.71858654545455,44.72275354545454,44.66554054545454,44.64165454545455,44.66498254545454,44.74571254545454,44.75945554545455,44.76402754545455,44.76862654545454,44.81444554545454,44.83277854545454,44.86944454545455,44.84081554545454,44.87137054545455,45.23165854545454,45.79192654545455,45.94806754545454,46.10915854545454,46.35444454545455,46.37648554545455,46.47565654545455,46.50319654545455,46.56381154545455,46.60238554545455,46.65902254545454,46.82359654545454,46.87637254545455,47.02220854545454,47.11748254545454,47.20498954545454,47.41637254545454,47.43025954545454,47.39665354545455,47.52275254545454,47.59414954545455,47.76943354545454,47.80997854545455,48.04054954545455,47.91915754545455,47.84553754545454,47.73165154545455,47.71276054545455,47.75776054545454,47.73303754545454,47.80248154545455,47.81275954545455,47.74137154545455,47.62748554545454,47.59966654545455,47.59960354545455,47.60512054545455,47.60512054545455,47.58857854545455,47.56104754545455,47.52798154545454,47.63266054545455,47.64367654545455,47.66020954545454,47.66020954545454,47.66571754545455,47.68775854545455,47.67122554545454,47.67122554545454,47.67673354545455,47.69326654545454,47.76488854545455,47.80897054545455,47.84753554545454,47.89160854545454,47.99077954545455,48.01526854545454,48.06276154545454,48.04136854545454,48.01248754545454,48.10192954545455,48.11304454545455,48.15331054545454,48.11609554545455,48.13054054545454,48.04332154545454,48.04285354545454,48.07645954545455,48.05498554545455,48.01315354545455,47.99205754545455,47.97408454545454,47.99986954545455,48.04036954545455,48.06791854545454,48.08444254545454,48.12301654545454,48.13954954545455,48.14505754545454,48.08995054545455,48.05689354545455,48.02935354545455,48.01833754545455,48.01833754545455,48.06791854545454,48.08995054545455,48.12301654545454,48.14505754545454,48.16158154545455,48.16158154545455,48.14505754545454,48.11750854545455,48.07342654545455,48.00732154545454,47.97976354545454,47.95773154545454,47.91915754545455,47.89160854545454,47.85855154545454,47.83101154545455,47.81446954545455,47.80346254545454,47.77039654545454,47.77039654545454,47.78142154545454,47.80346254545454,47.82549454545454,47.85305254545454,47.84202754545455,47.81998654545455,47.72632354545454,47.68775854545455,47.64367654545455,47.61061954545455,47.59408654545455,47.55553054545454,47.53899754545454,47.52798154545454,47.51696554545455,47.53348054545454,47.56104754545455,47.58307054545454,47.56104754545455,47.50042354545455,47.47082254545455,47.30165854545455,47.24499454545454,47.30303554545454,47.24137654545455,47.18110354545454,47.05554454545454,46.91331754545454,46.70950354545455,46.67399854545454,46.64645854545454,46.59135154545455,46.54727854545454,46.50319654545455,46.39300954545454,46.34892754545455,46.32138754545455,46.24425754545454,46.22771554545455,46.20018454545454,46.17813454545455,46.15610254545455,46.12854454545454,46.05141454545454,45.93571054545455,45.90816154545454,45.84755554545455,45.71533654545454,45.69328654545455,45.68227054545455,45.66023854545454,45.64369654545454,45.62166454545454,45.57208354545454,45.53902654545454,45.51699454545454,45.50045254545454,45.47842054545455,45.39578254545454,45.24702154545455,45.19743154545454,45.07072054545454,45.02663854545454,45.01562254545454,44.98256554545454,44.92195054545454,44.88889354545454,44.87236054545455,44.85031954545455,44.82277054545454,44.77869754545454,44.76768154545454,44.77869754545454,44.80074754545455,44.81727154545454,44.80624654545455,44.79523054545455,44.77318954545455,44.75115754545454,44.72910754545455,44.70157654545455,44.65197754545455,44.63546254545455,44.60239654545455,44.57484754545454,44.55830554545454,44.55280654545455,44.53077454545454,44.51423254545454,44.49770854545455,44.48118454545455,44.46466054545454,44.46466054545454,44.47015954545454,44.45363554545454,44.35581454545454,44.26332154545454,44.19859354545455,44.12415454545454,44.10276154545455,44.20081654545455,44.20693654545455,44.08887454545455,43.98906454545455,43.97004754545454,43.87022854545454,43.86071554545455,43.80367354545455,43.79892154545454,43.77991354545454,43.77040054545454,43.68009454545454,43.67058154545455,43.66582954545455,43.66582954545455,43.65631654545455,43.65157354545455,43.63730854545454,43.53748054545455,43.52322454545455,43.50895954545454,43.48995154545454,43.47093454545455,43.44242254545454,43.43766154545454,43.43766154545454,43.43291854545455,43.42340554545455,43.37587654545454,43.26179254545455,43.19525554545455,43.17147754545454,43.07641954545455,43.08117154545454,43.08117154545454,43.05722254545454,43.00395154545455,42.93553354545454,42.78499054545454,42.78110254545455,42.85776454545455,42.87636754545455,42.78526054545454,42.67221154545454,42.53387254545455,42.47053954545455,42.36638254545455,42.28942354545455,42.20664154545454,42.04276054545455,41.97970654545454,41.89804054545454,41.79859954545454,41.54110054545455,41.54220754545454,41.48192554545455,41.45693254545454,41.33719654545454,41.31386854545455,41.19886654545454,41.18304454545454,41.04582154545455,40.78888054545454,40.73526754545454,40.66136854545454,40.54110154545454,40.45749154545454,40.31332054545454,40.24026754545455,40.03803754545455,39.86276254545455,39.90193054545454,39.75192754545454,39.72525154545455,39.73804054545455,39.56888554545454,39.46137154545455,39.37915654545454,39.29804854545454,39.20664454545454,39.11294554545454,39.15859354545454,39.22387054545454,39.13470754545454,39.14720854545454,39.20082154545454,39.21414154545455,39.28247854545454,39.22442854545455,39.23470654545455,39.33026854545455,39.33165454545455,39.40497754545455,39.22693054545454,39.22497754545454,39.04415854545454,38.97747754545454,38.96582254545455,38.91859954545455,38.67498754545455,38.55526054545455,38.56977754545455,38.69275354545454,38.67332254545455,38.70831454545455,38.61692854545455,38.53749454545454,38.58803854545454,38.67526654545454,38.67387154545454,38.81581954545454,38.83137154545454,38.88610054545455,38.81014054545455]}]],[[{"lng":[-89.12165636363636,-89.17501736363637,-88.99945436363636,-88.48654436363637,-88.43807936363636,-88.50335636363637,-88.45612436363636,-88.07946536363637,-88.15446236363637,-88.03957736363637,-87.95474336363637,-87.90030236363637,-87.92945336363637,-87.89474936363636,-87.80195036363637,-87.72501836363637,-87.66307136363636,-87.58973936363637,-87.57780536363637,-87.51084536363636,-87.42780236363636,-87.13168436363637,-87.00918536363636,-86.81697236363637,-86.74334336363637,-86.65280336363637,-86.62194236363636,-86.51391536363637,-86.51751536363636,-86.44056536363637,-86.45835836363636,-86.40001136363637,-86.33715536363637,-86.27168036363636,-86.05195436363637,-85.91279636363636,-85.90473236363637,-85.81947536363637,-85.74223736363636,-85.65835736363637,-85.60585136363636,-85.40862536363636,-85.45668536363637,-85.42501436363636,-85.27502936363636,-85.18538936363636,-84.97279136363636,-84.80557136363636,-84.78529436363637,-84.87333236363637,-84.82363436363637,-84.87834536363637,-84.76307336363637,-84.60196436363637,-84.45112436363637,-84.29528936363637,-84.18251036363637,-83.86557536363637,-83.66611736363636,-83.59805936363637,-83.49862736363636,-83.30334536363637,-83.14002236363636,-83.01585836363637,-82.87834736363637,-82.81946936363637,-82.70807636363637,-82.54500536363636,-82.31140136363636,-82.26502436363637,-82.17501536363636,-82.21612736363636,-82.16204636363636,-81.99890336363637,-81.92389736363637,-81.92445536363637,-81.87417236363636,-81.83001836363637,-81.75917936363636,-81.82086536363637,-81.74696636363636,-81.75780236363637,-81.67834136363636,-81.57168236363637,-81.46763336363637,-81.44250536363637,-81.35585336363637,-81.22195136363636,-80.87750336363636,-80.83170236363637,-80.87000636363636,-80.80557536363636,-80.75780336363637,-80.73556436363637,-80.60779136363637,-80.60334536363636,-80.67502136363636,-80.51682836363636,-80.31556136363636,-80.20667936363637,-79.98607136363637,-79.53333536363637,-79.46473736363636,-79.55279336363637,-79.71807836363637,-79.84362836363637,-79.84945136363636,-79.77750536363637,-79.81501736363637,-79.46002136363637,-79.25586536363636,-78.97224836363637,-78.94195436363637,-78.74723936363637,-78.67224236363637,-78.63557636363636,-78.52584836363637,-78.33723536363637,-78.37501736363636,-78.25613636363637,-78.04779536363637,-77.95280036363637,-77.86168436363637],"lat":[36.97756054545454,37.06943254545454,37.21998454545454,37.07183554545454,37.13528554545454,37.35109654545455,37.41026254545455,37.48721254545455,37.66137154545455,37.81247254545455,37.77858754545455,37.82331754545455,37.91526154545455,37.92748354545454,37.87442854545454,37.89192454545455,37.82554954545454,37.87081954545454,37.92304654545455,37.91828554545454,37.94470054545454,37.78998154545454,37.92387454545455,37.98554254545454,37.89720754545454,37.90525354545455,37.85026354545455,37.93858954545454,38.03942554545454,38.06442754545454,38.13219754545454,38.10721354545455,38.13913654545454,38.06137654545454,37.96360054545455,38.05609354545454,38.16776554545455,38.28359554545454,38.26914154545454,38.31387154545454,38.44776454545454,38.56137154545454,38.70249154545454,38.73331654545455,38.74608754545455,38.68883854545455,38.78053954545454,38.78471554545454,38.88943054545454,38.91414454545454,38.97275254545455,39.06026854545454,39.12721054545454,39.06943954545455,39.10887754545454,39.00359554545454,38.80387654545455,38.76165754545455,38.62692754545454,38.68776754545454,38.70053854545454,38.59469854545454,38.61914254545454,38.71942954545454,38.73749254545455,38.57304454545454,38.54499154545454,38.40192754545455,38.45138254545454,38.59108954545454,38.61887254545454,38.77915354545454,38.84966854545454,39.01943554545455,38.97386854545454,38.87832454545454,38.88275254545454,38.94693154545454,38.93692354545454,39.07415554545454,39.11165854545454,39.16749454545454,39.26914954545455,39.27748354545455,39.39566254545455,39.41192554545454,39.34609054545455,39.39443854545454,39.62109454545455,39.71887054545454,39.76831654545455,39.91749154545455,39.92387254545455,40.08970654545454,40.29553654545455,40.47553654545454,40.57776754545454,40.64011954545455,40.70026654545455,40.54192954545454,40.43928454545455,40.76887354545455,40.92775954545454,40.94886454545455,41.20637254545455,41.26471054545454,41.30943154545455,41.33221054545455,41.40164554545455,41.48720854545454,41.84026054545455,41.86192354545454,42.03499354545455,42.15970654545455,42.14776354545454,42.08581654545454,42.10026154545455,42.04165354545454,41.90888554545455,41.79609754545455,41.76387754545454,41.82999154545454,41.82775954545455]}]]],null,null,{"interactive":true,"className":"","stroke":true,"color":"blue","weight":2,"opacity":0.8,"fill":false,"fillColor":"blue","fillOpacity":0.2,"smoothFactor":1,"noClip":false},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[33.94170000000004,36.363331,33.071998,39.53879999999998,38.45329999999997,41.99999999999999,39.77349,27.207067,33.656762,41.36949899999999,46.50999799999998,38.61882496999998,39.00000000000001,39.25667199999999,37.01249831999999,32.70500200000001,42.63167199999999,39.48022100000001,45.8815,43.48700000000006,46.70588999999996,38.26667000000001,34.40000200000001,48.00000000000002,35.65666999999999,47.50167100000004,40.06666899999997,43.45333100000001,40.91766667,33.15409999999996,39.46220000000005,43.31610000000001,39.87027778000002,33.83332800000003,45.71667100000003,41.83832899999999,41.86988000000004,34.67599799999999,44.450001,36.22406974000003,31.06666900000001,40.91489999999999,36.59667,43.60500000000002,47.9566,44.20000099999998,37.63999900000002,43.41674000000002],[-87.1083,-92.573334,-113.016526,-121.4855,-107.3342,-73.03666700000001,-75.53196,-80.797417,-82.19322500000001,-92.980301,-116.2961,-89.35229267,-86.511673,-96.58999600000001,-88.27010506000001,-93.513329,-72.123329,-79.07167099999999,-69.1767,-85.62909999999999,-96.78379,-93.40167200000002,-89.78679700000001,-106.4167,-79.06999999999999,-101.4317,-99.21167,-71.660004,-74.66418333,-107.1919,-119.0667,-73.92770000000002,-84.28555556000002,-96.56667299999999,-120.685,-79,-71.44463,-82.850993,-100.3867,-84.09263395000001,-94.099998,-109.4219,-78.29667000000001,-72.36000099999998,-118.9805,-88.44667099999999,-80.886673,-104.0972],[1.113733333333333,3.605333333333333,3.221,2.36,0.6271333333333333,0.08933333333333333,6.666666666666667e-05,5.679333333333333,2.546666666666667,1.083313333333333,2.373333333333334,0.849156,0.294,1.504666666666667,5.0236,0.7984666666666667,0.051,0.08726666666666667,0.4586666666666667,0.08998200000000001,0.3413333333333333,3.468,2.010666666666667,12.73333333333333,1.097706666666667,17.33333333333333,0.5504666666666667,0.148,0.03213933333333333,1.728836666666667,0.2818666666666667,0.528,0.2753333333333333,3.462775333333334,1.686666666666667,0.8666666666666667,0,2.292466666666667,15.73333333333333,2.242112,4.346666666666667,2.668733333333333,2.242333333333333,0.06306666666666666,6.374666666666666,1.62,0.4206666666666667,0.9820786666666667],null,null,{"interactive":true,"className":"","stroke":true,"color":null,"weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.8},null,null,["<b>LEWIS SMITH<\/b><br/>Storage:  1,670,600 acre-ft<br/>Purposes: CHNR<br/>Year Completed: 1961","<b>BULL SHOALS<\/b><br/>Storage:  5,408,000 acre-ft<br/>Purposes: CHSR<br/>Year Completed: 1951","<b>PAINTED ROCK DAM<\/b><br/>Storage:  4,831,500 acre-ft<br/>Purposes: C<br/>Year Completed: 1960","<b>Oroville<\/b><br/>Storage:  3,540,000 acre-ft<br/>Purposes: CHIRS<br/>Year Completed: 1968","<b>BLUE MESA<\/b><br/>Storage:    940,700 acre-ft<br/>Purposes: CHIR<br/>Year Completed: 1965","<b>COLEBROOK RIVER DAM<\/b><br/>Storage:    134,000 acre-ft<br/>Purposes: CHSR<br/>Year Completed: 1969","<b>ROCK MANOR GOLF COURSE DAM<\/b><br/>Storage:        100 acre-ft<br/>Purposes: C<br/>Year Completed: 2007","<b>STRUCTURE 193 (HURRICANE GATE NO.6)<\/b><br/>Storage:  8,519,000 acre-ft<br/>Purposes: CN<br/>Year Completed: 1972","<b>J. STROM THURMOND DAM<\/b><br/>Storage:  3,820,000 acre-ft<br/>Purposes: HCRFOS<br/>Year Completed: 1954","<b>RED ROCK DAM<\/b><br/>Storage:  1,624,970 acre-ft<br/>Purposes: CR<br/>Year Completed: 1969","<b>DWORSHAK DAM AND RESERVOIR<\/b><br/>Storage:  3,560,000 acre-ft<br/>Purposes: CHNRSF<br/>Year Completed: 1973","<b>CARLYLE LAKE DAM<\/b><br/>Storage:  1,273,734 acre-ft<br/>Purposes: CSONRF<br/>Year Completed: 1966","<b>MONROE LAKE DAM<\/b><br/>Storage:    441,000 acre-ft<br/>Purposes: CRS<br/>Year Completed: 1965","<b>TUTTLE CREEK DAM<\/b><br/>Storage:  2,257,000 acre-ft<br/>Purposes: CNORF<br/>Year Completed: 1962","<b>KENTUCKY<\/b><br/>Storage:  7,535,400 acre-ft<br/>Purposes: CHNR<br/>Year Completed: 1944","<b>BAYOU BODCAU DAM<\/b><br/>Storage:  1,197,700 acre-ft<br/>Purposes: CR<br/>Year Completed: 1949","<b>BIRCH HILL DAM<\/b><br/>Storage:     76,500 acre-ft<br/>Purposes: C<br/>Year Completed: 1942","<b>JENNINGS RANDOLPH DAM<\/b><br/>Storage:    130,900 acre-ft<br/>Purposes: CSOR<br/>Year Completed: 1981","<b>RIPOGENUS<\/b><br/>Storage:    688,000 acre-ft<br/>Purposes: CFHNRS<br/>Year Completed: 1916","<b>HARDY<\/b><br/>Storage:    134,973 acre-ft<br/>Purposes: CHR<br/>Year Completed: 1931","<b>FARGO-MOORHEAD DIVERSION<\/b><br/>Storage:    512,000 acre-ft<br/>Purposes: C<br/>Year Completed: NA","<b>HARRY S TRUMAN DAM<\/b><br/>Storage:  5,202,000 acre-ft<br/>Purposes: CHRF<br/>Year Completed: 1978","<b>SARDIS DAM<\/b><br/>Storage:  3,016,000 acre-ft<br/>Purposes: CR<br/>Year Completed: 1940","<b>FORT PECK DAM<\/b><br/>Storage: 19,100,000 acre-ft<br/>Purposes: CHNRI<br/>Year Completed: 1940","<b>B. EVERETT JORDAN DAM<\/b><br/>Storage:  1,646,560 acre-ft<br/>Purposes: CRSOFH<br/>Year Completed: 1974","<b>GARRISON DAM<\/b><br/>Storage: 26,000,000 acre-ft<br/>Purposes: HINRC<br/>Year Completed: 1953","<b>HARLAN COUNTY DAM<\/b><br/>Storage:    825,700 acre-ft<br/>Purposes: CISORF<br/>Year Completed: 1952","<b>FRANKLIN FALLS DAM<\/b><br/>Storage:    222,000 acre-ft<br/>Purposes: C<br/>Year Completed: 1943","<b>LAKE HOPATCONG DAM<\/b><br/>Storage:     48,209 acre-ft<br/>Purposes: C<br/>Year Completed: 1925","<b>ELEPHANT BUTTE<\/b><br/>Storage:  2,593,255 acre-ft<br/>Purposes: CHIR<br/>Year Completed: 1915","<b>LAHONTAN<\/b><br/>Storage:    422,800 acre-ft<br/>Purposes: CHIR<br/>Year Completed: 1915","<b>CONKLINGVILLE<\/b><br/>Storage:    792,000 acre-ft<br/>Purposes: CHNRS<br/>Year Completed: 1930","<b>ENGLEWOOD DAM<\/b><br/>Storage:    413,000 acre-ft<br/>Purposes: C<br/>Year Completed: 1922","<b>DENISON DAM<\/b><br/>Storage:  5,194,163 acre-ft<br/>Purposes: CSHO<br/>Year Completed: 1944","<b>JOHN DAY LOCK AND DAM<\/b><br/>Storage:  2,530,000 acre-ft<br/>Purposes: NHCIRO<br/>Year Completed: 1968","<b>KINZUA DAM<\/b><br/>Storage:  1,300,000 acre-ft<br/>Purposes: COHRF<br/>Year Completed: 1965","<b>LOUISQUISSET FLOOD CONTROL<\/b><br/>Storage:          0 acre-ft<br/>Purposes: C<br/>Year Completed: NA","<b>CLEMSON UPPER DIVERSION DAM<\/b><br/>Storage:  3,438,700 acre-ft<br/>Purposes: C<br/>Year Completed: 1961","<b>OAHE DAM<\/b><br/>Storage: 23,600,000 acre-ft<br/>Purposes: CHINR<br/>Year Completed: 1966","<b>NORRIS<\/b><br/>Storage:  3,363,168 acre-ft<br/>Purposes: CHR<br/>Year Completed: 1936","<b>SAM RAYBURN DAM AND RESERVOIR<\/b><br/>Storage:  6,520,000 acre-ft<br/>Purposes: CSHRF<br/>Year Completed: 1965","<b>FLAMING GORGE<\/b><br/>Storage:  4,003,100 acre-ft<br/>Purposes: CHRS<br/>Year Completed: 1963","<b>JOHN H KERR DAM<\/b><br/>Storage:  3,363,500 acre-ft<br/>Purposes: CHRSF<br/>Year Completed: 1953","<b>NORTH HARTLAND DAM<\/b><br/>Storage:     94,600 acre-ft<br/>Purposes: CRH<br/>Year Completed: 1961","<b>GRAND COULEE<\/b><br/>Storage:  9,562,000 acre-ft<br/>Purposes: CI<br/>Year Completed: 1941","<b>MENASHA DAM<\/b><br/>Storage:  2,430,000 acre-ft<br/>Purposes: CSNFR<br/>Year Completed: 1937","<b>BLUESTONE DAM<\/b><br/>Storage:    631,000 acre-ft<br/>Purposes: CRF<br/>Year Completed: 1947","<b>BOYSEN<\/b><br/>Storage:  1,473,118 acre-ft<br/>Purposes: CFHIRS<br/>Year Completed: 1951"],null,["LEWIS SMITH","BULL SHOALS","PAINTED ROCK DAM","Oroville","BLUE MESA","COLEBROOK RIVER DAM","ROCK MANOR GOLF COURSE DAM","STRUCTURE 193 (HURRICANE GATE NO.6)","J. STROM THURMOND DAM","RED ROCK DAM","DWORSHAK DAM AND RESERVOIR","CARLYLE LAKE DAM","MONROE LAKE DAM","TUTTLE CREEK DAM","KENTUCKY","BAYOU BODCAU DAM","BIRCH HILL DAM","JENNINGS RANDOLPH DAM","RIPOGENUS","HARDY","FARGO-MOORHEAD DIVERSION","HARRY S TRUMAN DAM","SARDIS DAM","FORT PECK DAM","B. EVERETT JORDAN DAM","GARRISON DAM","HARLAN COUNTY DAM","FRANKLIN FALLS DAM","LAKE HOPATCONG DAM","ELEPHANT BUTTE","LAHONTAN","CONKLINGVILLE","ENGLEWOOD DAM","DENISON DAM","JOHN DAY LOCK AND DAM","KINZUA DAM","LOUISQUISSET FLOOD CONTROL","CLEMSON UPPER DIVERSION DAM","OAHE DAM","NORRIS","SAM RAYBURN DAM AND RESERVOIR","FLAMING GORGE","JOHN H KERR DAM","NORTH HARTLAND DAM","GRAND COULEE","MENASHA DAM","BLUESTONE DAM","BOYSEN"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[27.207067,48.16158154545455],"lng":[-121.4855,-69.1767]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
