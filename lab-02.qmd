@@ -1,13 +1,13 @@
 ---
 title: "Lab 2 - Distances and Projections"
-output: 
-  html:
+format: 
+  html: 
     code-fold: true
+    code-summary: "Code"
 ---
 
-libraries
+Libraries
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 # spatial data science
 library(tidyverse)
@@ -35,7 +35,6 @@ library(flextable)
 For this lab we want to calculate distances between features, therefore we need a projection that preserves distance at the scale of CONUS. For this, we will use the North America Equidistant Conic:
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 eqdc <- '+proj=eqdc +lat_0=40 +lon_0=-96 +lat_1=20 +lat_2=60 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs'
 
@@ -46,7 +45,6 @@ eqdc <- '+proj=eqdc +lat_0=40 +lon_0=-96 +lat_1=20 +lat_2=60 +x_0=0 +y_0=0 +datu
 In R, USA boundaries are stored in the `USAboundaries` package. In case this package and data are **not** installed:
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 remotes::install_github("ropensci/USAboundaries")
 remotes::install_github("ropensci/USAboundariesData")
@@ -61,7 +59,6 @@ Once installed:
 -   Make sure the data is in a projected coordinate system suitable for distance measurements at the national scale (`eqdc`).
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 usa <- USAboundaries::us_states(resolution = "low") %>%
   filter(!state_name %in% c("Alaska", "Hawaii", "Puerto Rico", "Guam", "American Samoa", "U.S. Virgin Islands", "Northern Mariana Islands")) %>%
@@ -73,7 +70,6 @@ usa <- USAboundaries::us_states(resolution = "low") %>%
 In R, country boundaries are stored in the `rnaturalearth` package. In case this package is not installed:
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 remotes::install_github("ropenscilabs/rnaturalearthdata")
 ```
@@ -89,7 +85,6 @@ Once installed:
 -   Make sure the data is in a projected coordinate system suitable for distance measurements at the national scale (`eqdc`).
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 musac <- rnaturalearth::countries110 %>%
   st_as_sf() %>%
@@ -112,9 +107,8 @@ Finally, remove cities in states not wanted and make sure the data is in a proje
 Congratulations! You now have three real-world, large datasets ready for analysis.
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
-uscities <- readr::read_csv("uscities.csv") %>%
+uscities <- readr::read_csv("data/uscities.csv") %>%
   st_as_sf(coords = c("lng", "lat"), crs = 4326) %>%
   filter(!state_id %in% c("HI", "AK", "PR")) %>%
   st_transform(crs = eqdc)
@@ -129,7 +123,6 @@ Here we will focus on calculating the distance of each USA city to (1) the natio
 For **2.1** we are interested in calculating the distance of each USA city to the USA border (coastline or national border). To do this we need all states to act as single unit. Convert the USA state boundaries to a `MULTILINESTRING` geometry in which the state boundaries are **resolved**. Please do this starting with the states object and *NOT* with a filtered country object. In addition to storing this distance data as part of the cities `data.frame`, produce a table (`flextable`) documenting the five cities farthest from a state border. Include only the city name, state, and distance.
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 usa_border<- usa %>%
   st_union() %>%
@@ -157,7 +150,6 @@ slice_max(uscities, n = 5, order_by = country_border) %>%
 For **2.2** we are interested in calculating the distance of each city to the nearest state boundary. To do this we need all states to act as single unit. Convert the USA state boundaries to a `MULTILINESTRING` geometry in which the state boundaries are **preserved** (not resolved). In addition to storing this distance data as part of the cities `data.frame`, produce a table (`flextable`) documenting the five cities farthest from a state border. Include only the city name, state, and distance.
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 usa_states <- usa %>%
   st_cast("MULTILINESTRING")
@@ -185,7 +177,6 @@ slice_max(uscities, n = 5, order_by = state_border) %>%
 For **2.3** we are interested in calculating the distance of each city to the Mexican border. To do this we need to isolate Mexico from the country objects. In addition to storing this data as part of the cities data.frame, produce a table (`flextable`) documenting the five cities farthest from the Mexican border. Include only the city name, state, and distance.
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 mexico_border <- musac %>%
   filter(ADMIN == "Mexico") %>%
@@ -212,7 +203,6 @@ slice_max(uscities, n = 5, order_by = mexico_border) %>%
 For **2.4** we are interested in calculating the distance of each city to the Canadian border. To do this we need to isolate Canada from the country objects. In addition to storing this data as part of the cities data.frame, produce a table (`flextable`) documenting the five cities farthest from a state border. Include only the city name, state, and distance.
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 canada_border <- musac %>%
   filter(ADMIN == "Canada")%>%
@@ -245,7 +235,6 @@ Use lty to change the line type and size to change line width
 Use ggrepel::geom_label_repel to label your cities
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 
 top10_cities <- uscities %>%
@@ -271,7 +260,6 @@ ggplot() +
 ### 3.2 - City Distance from the Border
 Create a map that colors USA cities by their distance from the national border. In addition, re-draw and label the 5 cities that are farthest from the border.
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 farthest_cities <- uscities %>%
   slice_max(n = 5, order_by = country_border)
@@ -297,7 +285,6 @@ ggplot() +
 ### 3.3 City Distance from Nearest State
 Create a map that colors USA cities by their distance from the nearest state border. In addition, re-draw and label the 5 cities that are farthest from any border.
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 farthest_cities <- uscities %>%
   slice_max(state_border, n = 5) 
@@ -327,7 +314,6 @@ In addition, label the five (5) most populous cites in this zone.
 
 Hint: (create a new variable that finds the absolute difference between the distance to Mexico and the distance to Canada)
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 uscities <- uscities %>%
   mutate(distance_diff = abs(mexico_border - canada_border))
@@ -363,7 +349,6 @@ Recently, Federal Agencies have claimed basic constitutional rights protected by
 ### 4.1 Quantifying Border Zone
 How many cities are in this 100 mile zone? (100 miles ~ 160 kilometers)
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 zone <- USAboundaries::us_states(resolution = "low") %>%
   st_transform(crs = eqdc) %>%
@@ -377,7 +362,7 @@ zone_union <- zone_border %>%
   st_union() %>%
   st_cast("MULTILINESTRING")
 
-cities <- readr::read_csv("uscities.csv") %>%
+cities <- readr::read_csv("data/uscities.csv") %>%
   st_as_sf(coords = c("lng", "lat"), crs = 4326) %>%
   st_transform(crs = eqdc)
 
@@ -392,7 +377,6 @@ num_cities
 
 How many people live in a city within 100 miles of the border?
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 pop_in_zone <- sum(zone_cities$population, na.rm = TRUE)
 pop_in_zone
@@ -400,7 +384,6 @@ pop_in_zone
 
 What percentage of the total population is in this zone?
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 total_population <- sum(uscities$population, na.rm = TRUE)
 percent_in_zone <- (pop_in_zone / total_population) * 100
@@ -408,12 +391,11 @@ percent_in_zone
 ```
 
 Does it match the ACLU estimate in the link above?
-##### Yes, the article states that approximately two-thirds(66.67%) of the population lives within 100 miles of the border, which is close to the percentage calculated. 
+- Yes, the article states that approximately two-thirds(66.67%) of the population lives within 100 miles of the border, which is close to the percentage calculated. 
 
 Report this information as a table.
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 tibble(
   Cities = scales::comma(num_cities),
@@ -433,7 +415,6 @@ Use a color gradient from ‘orange’ to ‘darkred’
 Label the 10 most populous cities in the Danger Zone
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 zone_distance <- st_distance(zone_cities, zone_union) %>%
   as.vector()  
@@ -468,7 +449,6 @@ ggplot() +
 
 ## 4.3 Instead of labeling the 10 most populous cites, label the most populous city in each state within the Danger Zone.
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 zone_distance <- st_distance(zone_cities, zone) %>%
   as.vector()  

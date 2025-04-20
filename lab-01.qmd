@@ -1,12 +1,12 @@
 ---
 title: "Lab 1 - COVID Trends"
-output: 
-  html:
+format: 
+  html: 
     code-fold: true
+    code-summary: "Code"
 ---
 
 ```{r}
-#| echo: FALSE
 #| warning: FALSE
 library(tidyverse)
 library(flextable)
@@ -27,7 +27,6 @@ library(httr)
 
 a. read in the data from the NY-Times URL
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 data <- read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")
 ```
@@ -35,7 +34,6 @@ data <- read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master
 b. create an object called my.date and set it as "2022-02-01"
 c. create an object called my.state and set it to "Colorado"
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 my.date <- as.Date("2022-02-01")
 my.state <- "Colorado"
@@ -43,7 +41,6 @@ my.state <- "Colorado"
 
 d. make a subset that limits the data to Colorado and add a new column with daily new cases. do the same for new deaths 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 co_data <- data %>%
   filter(state == my.state) %>%
@@ -56,7 +53,6 @@ co_data <- data %>%
 
 e. generate 2 tables. the first should show the 5 counties with the most cummulative cases on your date of interest, and the second should show the 5 counties with the most new cases on that same date
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 today_data <- filter(co_data, date == my.date)
 
@@ -80,14 +76,12 @@ slice_max(today_data, n = 5, order_by = new_cases) %>%
 
 a. read in the population data and create a five digit FIP variable. keep only columns that contain "NAME" or "2021" and remove all state level rows
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 # Load population data from the given URL
 pop_url <- read_csv("co-est2023-alldata.csv")
 ```
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 # Read and process the population data
 cd <- pop_url %>%
@@ -102,13 +96,11 @@ cd <- pop_url %>%
 
 a. join the population data to the Colorado COVID data and compute the per capita cumulative cases, per capita new cases, and per capita new deaths. generate 2 new tables. the first should show the 5 counties with the most cumulative cases per capita on your date, and the second should show the 5 counties with the most new cases per capita on the same date
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 co_join <- inner_join(co_data, cd, by = "fips") 
 ```
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 per_capita <- co_join %>%
   group_by(county) %>%
@@ -140,7 +132,6 @@ slice_max(capita_my_date, n = 5, order_by = new_cases_per_capita) %>%
 
 a. filter the merged COVID/Population data for Colorado to include the last 14 days. determine the total number of new cases in the last 14 days per 100,000 people. print a table of the top 5 counties and report the number of counties that meet the watch list condition
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 threshold <- per_capita %>%
   filter(date >= (my.date - 14) & date <= my.date) %>%  
@@ -169,7 +160,6 @@ threshold %>%
 
 a. determine the percentage of deaths in each county that were attributed to COVID last year(2021). plot a visualization of all counties where COVID deaths account for 20% or more of the annual death toll
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 death_toll_2021 <- co_join %>%
   mutate(year = year(date)) %>%
@@ -196,7 +186,6 @@ death_20 %>%
 ## Question 6: Multi-state
 a. group/summarize county level data to the state level, filter it to the four states of interest, and calculate the number of daily new cases and the 7-day rolling mean
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 state_data <- data %>%
   filter(state %in% c("Alabama", "Ohio", "Colorado", "New York")) %>%
@@ -217,7 +206,6 @@ state_data <- data %>%
 
 b. facet plot the daily new cases and the 7-day rolling mean
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 ggplot(state_data, aes(x = date, y = new_cases)) +  
   geom_col(aes(fill = state)) +  
@@ -242,7 +230,6 @@ ggplot(state_data, aes(x = date, y = new_cases_mean)) +
 
 c. explore the cases per capita of each state and calculate the 7-day rolling mean of the new cases per capita
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 states_join <- inner_join(state_data, cd, by = "fips") %>%
   mutate(new_cases_capita = new_cases / POPESTIMATE2021,  
@@ -252,7 +239,6 @@ states_join <- inner_join(state_data, cd, by = "fips") %>%
 
 d. plot the 7-day rolling averages overlying each other
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 ggplot(states_join, aes(x = date, y = new_cases_mean, fill = state, group = state)) +  
   geom_col() +  
@@ -272,13 +258,11 @@ e. Briefly describe the influence scaling by population had on the analysis? Doe
 
 a. calculate the Weighted Mean Center of the COVID-19 outbreak
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 county_centroids <- readr::read_csv('https://raw.githubusercontent.com/mikejohnson51/csu-ess-330/refs/heads/main/resources/county-centroids.csv')
 ```
 
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 county_join <- inner_join(county_centroids, data, by = "fips") %>%
   group_by(date) %>%  
@@ -295,7 +279,6 @@ county_join <- inner_join(county_centroids, data, by = "fips") %>%
 
 b. make two plots next to each other showing cases in navy and deaths in red. describe the differences in the plots and what they mean about the spatial patterns seen with COVID impacts
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 a <- ggplot() +
   borders("state", fill = "gray90", colour = "white") +
@@ -334,7 +317,6 @@ b. add a new column to the data for year, month, and season
 c. group the data by state, year, and season and summarize the total population, new cases, and new deaths per grouping
 d. apply a log transformation to cases, deaths, and population
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 trends <- data %>%
   group_by(fips) %>%
@@ -364,7 +346,6 @@ trends <- data %>%
 a. build a linear model to predict the log of cases using the log of deaths, the log of population, and the season. 
 b. Once the model is built, summarize it (summary) and report the R-squared value and the p-value of the model. What does this mean for the value of its application?
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 lm_model <- lm(log_cases ~ log_deaths*log_population + season, data = trends)
 
@@ -384,7 +365,6 @@ c. create a histogram of the residuals to visually check for residual normality.
 
 ##### The histogram looks to be normally distributed. A linear model was appropriate for this case.  
 ```{r}
-#| echo: TRUE
 #| warning: FALSE
 model_eval <- broom::augment(lm_model, trends = trends)
 

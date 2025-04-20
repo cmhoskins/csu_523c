@@ -684,6 +684,16 @@ sense? How might the tessellation you chose impact your findings? How
 does the distribution of dams coincide with other geographic factors
 such as river systems, climate, ect?
 
+Irrigation dams are most concentrated around what looks like Wyoming,
+Utah, Colorado and Texas. That makes sense, as these areas divert water
+for irrigation. Hydroelectric dams are concentrated in the Northeast and
+West Coast. This makes sense, as the states that produce the most
+hydropower are Washington, New York, California, and Oregon. Flood
+Control dams are concentrated around the Midwest and seem to be in areas
+that the Mississippi River runs through. Finally, water supply dams are
+scattered. They may represent areas with high population or with high
+agricultural water needs.
+
 ## Question 5: 
 
 You have also been asked to identify the largest, at risk, flood control
