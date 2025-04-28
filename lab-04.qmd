@@ -1,0 +1,524 @@
+---
+title: "Lab 4 - Rasters & Remote Sensing"
+format: 
+  html: 
+    code-fold: true
+    code-summary: "Code"
+---
+
+Libraries
+
+```{r}
+#| warning: FALSE
+library(rstac) # STAC API
+library(terra) # Raster Data handling
+library(sf) # Vector data processing
+library(mapview) # Rapid Interactive visualization
+library(raster)
+library(RColorBrewer)
+library(sp)
+```
+
+Almost all remote sensing / image analysis begins with the same basic steps:
+
+1.  Identify an area of interest (AOI)
+
+2.  Identify the temporal range of interest
+
+3.  Identify the relevant images
+
+4.  Download the images
+
+5.  Analyze the products
+
+## Step 1 - AOI Identification
+
+First we need to identify an AOI. We want to be able to extract the flood extents for Palo, Iowa and its surroundings. To do this we will use the geocoding capabilities within the AOI package.
+
+```{r}
+#| warning: FALSE
+palo <- AOI::geocode("Palo, Iowa", bbox = TRUE)
+```
+
+This region defines the AOI for this analysis.
+
+## Step 2 - Temporal Identification
+
+The flood event occurred on September 26, 2016. A primary challenge with remote sensing is the fact that all satellite imagery is not available at all times. In this case Landsat 8 has an 8 day revisit time. To ensure we capture an image within the date of the flood, lets set our time range to the period between September 24th - 29th of 2016. We will define this duration in the form YYYY-MM-DD/YYYY-MM-DD.
+
+```{r}
+#| warning: FALSE
+temporal_range <- "2016-09-24/2016-09-29"
+```
+
+## Step 3 - Identifying the Relevant Images
+
+The next step is to identify the images that are available for our AOI and time range. This is where the rstac package comes in. The rstac package provides a simple interface to the SpatioTemporal Asset Catalog (STAC) API, which is a standard for discovering and accessing geospatial data.
+
+STAC is a specification for describing geospatial data in a consistent way, making it easier to discover and access datasets. It provides a standardized way to describe the metadata of geospatial assets, including their spatial and temporal extents, data formats, and other relevant information.
+
+-   Catalog: A catalog is a collection of STAC items and collections. It serves as a top-level container for organizing and managing geospatial data. A catalog can contain multiple collections, each representing a specific dataset or group of related datasets.
+
+-   Items: The basic unit of data in STAC. Each item represents a single asset, such as a satellite image or a vector dataset. Items contain metadata that describes the asset, including its spatial and temporal extents, data format, and other relevant information.
+
+-   Asset: An asset is a specific file or data product associated with an item. For example, a single satellite image may have multiple assets, such as different bands or processing levels. Assets are typically stored in a cloud storage system and can be accessed via URLs.
+
+For this project we are going to use a STAC catalog to identify the data available for our analysis. We want data from the Landsat 8 collection which is served by the USGS (via AWS), Google, and Microsoft Planetary Computer (MPC). MPC is the one that provides free access so we will use that data store.
+
+If you go to this link you see the JSON representation of the full data holdings. If you CMD/CTL+F on that page for Landsat you’ll find the references for the available data stores.
+
+Within R, we can open a connection to this endpoint with the stac function:
+```{r}
+#| warning: FALSE
+# Open a connection to the MPC STAC API
+(stac_query <- stac("https://planetarycomputer.microsoft.com/api/stac/v1"))
+```
+
+That connection will provide an open entry to ALL data hosted by MPC. The stac_search function allows us to reduce the catalog to assets that match certain criteria (just like dplyr::filter reduces a data.frame). The get_request() function sends your search to the STAC API returning the metadata about the objects that match a criteria. The service implementation at MPC sets a return limit of 250 items (but it could be overridden with the limit parameter).
+
+Here, we are interested in the “Landsat Collection 2 Level-2” data. From the JSON file (seen in the browser). To start, lets search for that collection using the stac -> stac_search –> get_request workflow:
+
+```{r}
+#| warning: FALSE
+(stac_query <-stac("https://planetarycomputer.microsoft.com/api/stac/v1") |> 
+  stac_search(
+    collections = "landsat-c2-l2") |> 
+  get_request())
+```
+
+Awesome! So the first 250 items from the Level-2 Landsat collection were returned. Within each item, there are a number of assets (e.g. the red, green, blue bands) and all items have some associated fields like the sub item assets, the bounding box, etc. We can now refine our search to limit the returned results to those that cover our AOI and time range of interest:
+```{r}
+#| warning: FALSE
+(stac_query <- stac("https://planetarycomputer.microsoft.com/api/stac/v1") |> 
+  stac_search(
+    collections = "landsat-c2-l2",
+    datetime    = temporal_range,
+    bbox        = st_bbox(palo)) |> 
+  get_request())
+```
+
+By adding these constraints, we now see just two items. One from the Landsat 7 Level 2 dataset, and one from the Landsat 8 Level 2 dataset. For this lab, lets focus on the Landsat 8 item. We can use either the item or the id search criteria to elect this:
+
+```{r}
+#| warning: FALSE
+(stac_query <- stac("https://planetarycomputer.microsoft.com/api/stac/v1") |> 
+  stac_search(
+    collections = "landsat-c2-l2",
+    datetime    = temporal_range,
+    bbox        = st_bbox(palo),
+    limit = 1) |> 
+  get_request())
+```
+
+```{r}
+#| warning: FALSE
+## OR ## 
+
+(stac_query <- stac("https://planetarycomputer.microsoft.com/api/stac/v1") |> 
+  stac_search(
+    id = 'LC08_L2SP_025031_20160926_02_T1',
+    collections = "landsat-c2-l2",
+    datetime    = temporal_range,
+    bbox        = st_bbox(palo)) |> 
+  get_request())
+```
+
+The last thing we need to do, is sign this request. In rstac, items_sign(sign_planetary_computer()) signs STAC item asset URLs retrieved from Microsoft’s Planetary Computer, ensuring they include authentication tokens for access. sign_planetary_computer() generates the necessary signing function, and items_sign() applies it to STAC items. This is essential for accessing datasets hosted on the Planetary Computer, and other catalog were data access might be requester-paid or limited.
+
+```{r}
+#| warning: FALSE
+(stac_query <- stac("https://planetarycomputer.microsoft.com/api/stac/v1") |> 
+  stac_search(
+    collections = "landsat-c2-l2",
+    datetime    = temporal_range,
+    bbox        = st_bbox(palo),
+    limit = 1) |> 
+  get_request() |> 
+  items_sign(sign_planetary_computer()))
+```
+
+## Step 4 - Downloading Needed Images
+
+OK! Now that we have identified the item we want, we are ready to download the data using assets_download(). In total, a Landsat 8 item has the following 11 bands:
+
+```{r}
+#| warning: FALSE
+knitr::include_graphics("images/lsat8-bands.jpg")
+```
+
+For this lab, lets just get the first 6 bands. Assets are extracted from a STAC item by the asset name (look at the print statements of the stac_query). Let’s define a vector of the assets we want:
+
+```{r}
+#| warning: FALSE
+# Bands 1-6
+bands <- c('coastal', 'blue', 'green', 'red', 'nir08', 'swir16')
+```
+
+Now we can use the assets_download() function to download the data. The output_dir argument specifies where to save the files, and the overwrite argument specifies whether to overwrite existing files with the same name.
+
+```{r}
+#| warning: FALSE
+assets_download(items = stac_query,
+                asset_names = bands, 
+                output_dir = 'data', 
+                overwrite = TRUE)
+```
+
+And that does it! You now have the process needed to get you data.
+
+With a set of local files, you can create a raster object! Remember your files need to be in the order of the bands (double check step 2).
+
+- list.files() can search a directory for a pattern and return a list of files. The recursive argument will search all sub-directories. The full.names argument will return the full path to the files.
+
+- The rast() function will read the files into a raster object.
+
+- The setNames() function will set the names of the bands to the names we defined above.
+
+## Question 1 - Data Access
+
+Download all the data needed for this lab. What are the dimensions of your stacked image? What is the CRS? What is the cell resolution?
+
+```{r}
+#| warning: FALSE
+raster_files <- list.files(
+  "data/landsat-c2/level-2/standard/oli-tirs/2016/025/031/LC08_L2SP_025031_20160926_20200906_02_T1", 
+  pattern = "\\.TIF$", 
+  full.names = TRUE)
+
+palo_18_20160926 <- rast(raster_files)
+
+names(palo_18_20160926) <- bands
+
+palo_18_20160926
+```
+
+## Step 5 - Analyze the Images
+
+We only want to analyze our image for the regions surrounding Palo (our AOI). Transform your AOI to the CRS of the landsat stack and use it to crop your raster stack.
+
+```{r}
+#| warning: FALSE
+palo_transform <- st_transform(palo, crs(palo_18_20160926))
+
+palo_crop <- crop(palo_18_20160926, vect(palo_transform))
+```
+
+Awesome! We have now (1) identified, (2) downloaded, and (3) saved our images.
+
+We have loaded them as a multiband SpatRast object and cropped the domain to our AOI. Lets make a few RGB plots to see what these images reveal.
+
+## Question 2 - Data Visualization
+Standard cameras replicate whats seen with the human eye, by capturing light in the red, green and blue wavelengths and applying red, green ,and blue filters (channels) to generate a natural looking RGB image.
+
+With a multispectral Landsat 8 image, we have more information to work with and different wavelengths/combinations can help isolate particular features.
+
+For example, the Near Infrared (NIR) wavelength is commonly used to analysis vegetation health because vegetation reflects strongly in this portion of the electromagnetic spectrum. Alternatively, the Shortwave Infrared (SWIR) bands are useful for discerning what is wet and dry.
+
+When working with Landsat imagery, a logical first step is to load an image into an image analysis program (like ENVI) to visualize whats in the scene. We can do the same thing with R using the plotRGB function and selecting which band should populate each channel.
+
+stretching is a common technique used to enhance the contrast of an image by adjusting the brightness and contrast of the pixel values. This is done by mapping the pixel values to a new range, which can help to highlight certain features in the image. In R, the stretch argument in the plotRGB function allows you to apply different stretching methods to enhance the visual appearance of the image. Test the different stretch options (“lin” and “hist”) and see how they affect the image.
+
+For question 2, make four unique combinations:
+
+R-G-B (natural color)
+NIR-R-G (fa) (color infared)
+NIR-SWIR1-R (false color water focus)
+Your choice
+What does each image allow you to see?
+
+```{r}
+#| warning: FALSE
+#| results: 'hide'
+natural_color <- plotRGB(palo_crop, r = 4, g = 3, b = 2, stretch = "none")
+natural_color
+# as close to true color as you can get
+# vegetation is green, water is blue or black, urban areas are gray or brown, soil is brown or tan
+# no stretch with raw values
+
+CIR <- plotRGB(palo_crop, r = 5, g = 4, b = 3, stretch = "lin")
+CIR
+# good for visualizing vegetation in red
+# vegetation is red, water is blue or black, urban areas are light green, soil is orange or brown
+# stretch uses linear scaling to enhance contrast
+
+false_color <- plotRGB(palo_crop, r=5, g=6, b=4, stretch = "hist")
+false_color
+# good for visualizing land and water
+# vegetation is red, water is blue or black, urban areas are green or yellow, soil is yellow or orange
+# stretch based on histogram and will emphasise certain features
+
+false_color_ag <- plotRGB(palo_crop, r=6, g=5, b=2, stretch = "q95")
+false_color_ag
+# agricultural vegetation shows up bright green
+# vegetation is green, water is blue or black, urban areas are purple or brown, soil is brown or tan
+# stretch based on 95th percentile and removes outliers
+```
+
+## Question 3 - Indices and Thresholds
+
+Accurate assessment of surface water features (like flooding) have been made possible by remote sensing technology. Index methods are commonly used for surface water estimation using a threshold value.
+
+For this lab we will look at 5 unique thresholding methods for delineating surface water features from different combinations of Landsat bands.
+
+### Step 1 - Raster Algebra
+
+- Create 5 new rasters using the formulas for NDVI, NDWI, MNDWI, WRI and SWI
+- Combine those new rasters into a stacked object (c())
+- Set the names of your new stack to useful values
+- Plot the new stack, using the following palette (colorRampPalette(c("blue", "white", "red"))(256))
+
+```{r}
+#| warning: FALSE
+#| results: 'hide'
+# NDVI = (NIR - Red) / (NIR + Red)
+NDVI <- (palo_crop[[5]] - palo_crop[[4]]) / (palo_crop[[5]] + palo_crop[[4]])
+
+# NDWI = (Green - NIR) / (Green + NIR)
+NDWI <- (palo_crop[[3]] - palo_crop[[5]]) / (palo_crop[[3]] + palo_crop[[5]])
+
+# MNDWI = (Green - SWIR1) / (Green + SWIR1)
+MNDWI <- (palo_crop[[3]] - palo_crop[[6]]) / (palo_crop[[3]] + palo_crop[[6]])
+
+# WRI (Green + Red) / (NIR + SWIR1)
+WRI <- (palo_crop[[3]] + palo_crop[[4]]) / (palo_crop[[5]] + palo_crop[[6]])
+
+# SWI = 1 / sqrt(Blue - SWIR1)
+diff <- palo_crop[[2]] - palo_crop[[6]]
+diff[diff <= 0] <- NA  
+SWI <- 1 / sqrt(diff)
+```
+
+```{r}
+#| warning: FALSE
+#| results: 'hide'
+stack <- c(NDVI, NDWI, MNDWI, WRI, SWI)
+
+names(stack) <- c("NDVI", "NDWI", "MNDWI", "WRI", "SWI")
+
+plot(stack, col = colorRampPalette(c("blue", "white", "red"))(256))
+```
+
+### Step 2 - Raster Thresholding
+
+Here we will extract the flood extents from each of the above rasters using the thresholds defined in the above table.
+
+Thresholds:
+- NDVI : Cells less than 0
+- NDWI : Cells greater than 0
+- MNDWI : Cells greater than 0
+- WRI : Cells greater than 1
+- SWI : Cells less than 5
+
+For this, we will use the app function and apply a custom formula for each calculated field from step 1 that applies the threshold in a way that flooded cells are 1 and non-flooded cells are 0.
+
+```{r}
+NDVI_t <- app(NDVI, fun = function(x) ifelse(x < 0, 1, 0))
+NDWI_t <- app(NDWI, fun = function(x) ifelse(x > 0, 1, 0))
+MNDWI_t <- app(MNDWI, fun = function(x) ifelse(x > 0, 1, 0))
+WRI_t <- app(WRI, fun = function(x) ifelse(x > 1, 1, 0))
+SWI_t <- app(SWI, fun = function(x) ifelse(x < 5, 1, 0))
+```
+
+
+The app function applies a function to each cell of the raster, and the ifelse function is used to set the values based on the threshold.
+
+For all 5 index rasters do the following apply the appropriate threshold and then do the following:
+
+- Stack the binary ([0,1]) files into a new stack (c()),
+- Set the names to meaningful descriptions (setNames)
+- Perform one more classifier (app) making sure that all NA values are set to zero.
+- Plot the stack so that floods are blue, and background is white.
+
+```{r}
+binary_stack <- c(NDVI_t, NDWI_t, MNDWI_t, WRI_t, SWI_t)
+
+names(binary_stack) <- c("NDWI water threshold", "NDWI water threshold", "MNDWI water threshold", "WRI water threshold", "SWI water threshold")
+
+binary_stack <- app(binary_stack, fun = function(x) ifelse(is.na(x), 0, x))
+
+plot(binary_stack, col = c("white", "blue"))
+```
+
+### Step 3 
+
+Describe the differences and similarities between the different maps
+
+## Question 4
+
+An alternative way to identify similar features in a continuous field is through supervised or unsupervised classification. Supervised classification groups values (cells) based on user supplied “truth” locations. Since flood events are fast-occurring there is rarely truth points for a live event. Instead developers rely on libraries of flood spectral signatures.
+
+Unsupervised classification finds statistically significant groupings within the data. In these clustering algorithms, the user specifies the number of classes and the categorization is created based on the patterns in the data.
+
+For this lab we will use a simple k-means algorithm to group raster cells with similar spectral properties.
+
+### Step 1
+
+Anytime we want to be able to produce a consistent/reproducible result from a random process in R we need to set a seed. Do so using set.seed
+
+```{r}
+set.seed(123)
+```
+
+### Step 2
+
+- Extract the values from your 6-band raster stack with values
+- Check the dimensions of the extracted values with dim
+
+What do the diminsions of the extracted values tell you about how the data was extracted?
+
+- Remove NA values from your extracted data with na.omit for safety
+
+```{r}
+#| warning: FALSE
+
+vals <- values(palo_crop)
+
+dim(vals)
+
+vals <- vals[complete.cases(vals), ]
+```
+
+### Step 3
+
+- Use the kmeans clustering algorithm from the stats package to cluster the extracted raster data to a specified number of clusters k (centers). Start with 12.
+
+- Once the kmeans algorithm runs, the output will be a list of components. One of these is cluster which provides a vector of integers from (1:k) indicating the cluster to which each row was allocated.
+
+```{r}
+km <- kmeans(vals, centers = 12, nstart = 25)
+```
+
+### Step 4
+
+- Create a new raster object by copying one of the original bands. For example:
+Set the values of the copied raster to the cluster vector from the output kmeans object. For example:
+- Try a few different clusters (k) to see how the map changes.
+
+```{r}
+#| warning: FALSE
+#| results: 'hide'
+
+km_raster <- raster(palo_crop[[1]])
+
+values(km_raster)[!is.na(values(palo_crop[[1]]))] <- km$cluster
+
+plot(km_raster, col = rainbow(12), main = "K-means with 12 clusters")
+```
+
+```{r}
+#| warning: FALSE
+#| results: 'hide'
+
+#4 clusters
+km4 <- kmeans(vals, centers = 4, nstart = 25)
+km_raster4 <- raster(palo_crop[[1]])
+values(km_raster4)[!is.na(values(palo_crop[[1]]))] <- km4$cluster
+plot(km_raster4, col = rainbow(4), main = "K-means with 4 clusters")
+
+#7 clusters
+km7 <- kmeans(vals, centers = 7, nstart = 25)
+km_raster7 <- raster(palo_crop[[1]])
+values(km_raster7)[!is.na(values(palo_crop[[1]]))] <- km7$cluster
+plot(km_raster7, col = rainbow(7), main = "K-means with 7 clusters")
+
+#8 clusters
+km8 <- kmeans(vals, centers = 8, nstart = 25)
+km_raster8 <- raster(palo_crop[[1]])
+values(km_raster8)[!is.na(values(palo_crop[[1]]))] <- km8$cluster
+plot(km_raster8, col = rainbow(8), main = "K-means with 8 clusters")
+
+#11 clusters
+km11 <- kmeans(vals, centers = 11, nstart = 25)
+km_raster11 <- raster(palo_crop[[1]])
+values(km_raster11)[!is.na(values(palo_crop[[1]]))] <- km11$cluster
+plot(km_raster11, col = rainbow(11), main = "K-means with 11 clusters")
+```
+
+### Step 5:
+
+Great! You now have a categorical raster with categories 1:k. The issue is we don’t know the value that corresponds to the flood water. To identify the flood category programatically, generate a table crossing the values of one of your binary flood rasters, with the values of your kmeans_raster. To do this, you will use the table function and pass it the values from a binary flood raster, and the values from your kmeans_raster. Here the following occurs:
+
+- table builds a contingency table counting the number of times each combination of factor levels in the input vector(s) occurs. This will give us a table quantifying how many cells with a value 1 are aligned with each of the k classes, and how many cells with a value 0 are aligned with each of the k classes. If you pass the binary flood values as the first argument to table then the unique values (0,1) will be the rows. They will always be sorted meaning you know the flooded cells will be in the second row.
+
+- which.max() returns the index of the maximum value in a vector.
+
+- combine this information to identify the cluster in the kmeans data that coincides with the most flooded cells in the binary mask.
+
+- Once you know this value, use app to extract the flood mask in a similar way to the thresholding you did above.
+
+- Finally add this to add to your flood raster stack with c() and make a new plot!
+
+```{r}
+flood_table <- table(NDWI_t[], km_raster[])
+print(flood_table)
+
+which.max(flood_table)
+
+flood_class <- 1
+
+flood_raster <- km_raster
+values(flood_raster) <- ifelse(values(flood_raster) == flood_class, 1, 0)
+
+plot(flood_raster, col = c("white", "blue"), main = "Floodwater (K-means)")
+```
+
+## Question 5
+Awesome! You have now created a flood raster using 6 different methods. Our last goal is to identify how they compare.
+
+- First we will calculate the total area of the flooded cells in each image. You can use global to determine the sum of each layer. Since flooded cells have a value of 1, the sum of an entire band is equivalent to the number of flooded cells. You can then use the resolution of the cell to convert counts to a flooded area.
+
+Print these values
+```{r}
+flooded_cells <- global(binary_stack, fun = "sum", na.rm = TRUE)
+
+print(flooded_cells)
+
+cell_res <- res(binary_stack) 
+
+cell_area <- cell_res[1] * cell_res[2] 
+
+flooded_area <- flooded_cells$sum * cell_area
+
+data.frame(
+  Layer = rownames(flooded_cells),
+  Flooded_Cells = flooded_cells$sum,
+  Flooded_Area_m2 = flooded_area)
+```
+
+
+- Second we can visualize the uncertainty in our classifications by summing the entire stack using app. The higher the count in each pixel, the more certain we can be about its flooded state. For example, if a cell has a value of 6, it indicates that every method identified the cell as flooded, if it has a value of 2 then we know that two of the methods identified the cell as flooded.
+
+Plot your flood map using the blues9 color palette
+```{r}
+certainty <- app(binary_stack, fun = sum)
+
+plot(certainty, 
+     main = "Flooded Area Classification Certainty (0–5 Methods)", 
+     colramp = colorRampPalette(blues9),
+     breaks = seq(-0.5, 5.5, by = 1),
+     legend = TRUE)
+```
+
+
+- Third once you have a summed raster layer, copy it as a new layer, and set all 0 values to NA. Then map the raster with mapview. Zoom and pan around the interactive map noting that a pixel level is displayed in the upper right hand corner.
+
+```{r}
+certainty_copy <- certainty
+
+certainty_copy[certainty_copy == 0] <- NA
+
+mapview(certainty_copy, 
+        main = "Flooded Area Classification Certainty (0–5 Methods)", 
+        layer.name = "Flood Certainty", 
+        colramp = colorRampPalette(blues9))
+```
+
+
+Why are some of the cell values not an even number?
+I think it is because the indices raster considers 5 different thresholds. 
+
+Congratulations! You have successfully carried out a complete flood analysis from data acquisition through evaluation. This kind of work goes on regularly and is part of a couple national efforts (NOAA, USGS, FirstStreet, FEMA) to generate flood inundation libraries that contribute to better extraction and classification of realtime flood events, resource allocation during events, and damage assessments post events.
+
+Here we used Landsat imagery but the same process could be implemented on drone footage, MODIS data, or other private satellite imagery.
+
+Your evaluation was based purely on the raster data structure and your ability to conceptualize rasters as vectors of data with dimensional structure. You applied simple mathematical operators (+, /, -) to the raster bands, and a kmeans clustering algorithm to the data matrix of the multiband raster - all within ~100 lines of code!

@@ -391,7 +391,7 @@ percent_in_zone
 ```
 
 Does it match the ACLU estimate in the link above?
-- Yes, the article states that approximately two-thirds(66.67%) of the population lives within 100 miles of the border, which is close to the percentage calculated. 
+Yes, the article states that approximately two-thirds(66.67%) of the population lives within 100 miles of the border, which is close to the percentage calculated. 
 
 Report this information as a table.
 
