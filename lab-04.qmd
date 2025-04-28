@@ -450,7 +450,6 @@ Great! You now have a categorical raster with categories 1:k. The issue is we do
 
 ```{r}
 #| warning: FALSE
-#| results: 'hide'
 flood_table <- table(NDWI_t[], km_raster[])
 print(flood_table)
 
@@ -472,7 +471,6 @@ Awesome! You have now created a flood raster using 6 different methods. Our last
 Print these values
 ```{r}
 #| warning: FALSE
-#| results: 'hide'
 flooded_cells <- global(binary_stack, fun = "sum", na.rm = TRUE)
 
 print(flooded_cells)
@@ -495,7 +493,6 @@ data.frame(
 Plot your flood map using the blues9 color palette
 ```{r}
 #| warning: FALSE
-#| results: 'hide'
 certainty <- app(binary_stack, fun = sum)
 
 plot(certainty, 
@@ -510,7 +507,6 @@ plot(certainty,
 
 ```{r}
 #| warning: FALSE
-#| results: 'hide'
 certainty_copy <- certainty
 
 certainty_copy[certainty_copy == 0] <- NA
