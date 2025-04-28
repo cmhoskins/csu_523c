@@ -449,6 +449,8 @@ Great! You now have a categorical raster with categories 1:k. The issue is we do
 - Finally add this to add to your flood raster stack with c() and make a new plot!
 
 ```{r}
+#| warning: FALSE
+#| results: 'hide'
 flood_table <- table(NDWI_t[], km_raster[])
 print(flood_table)
 
@@ -469,6 +471,8 @@ Awesome! You have now created a flood raster using 6 different methods. Our last
 
 Print these values
 ```{r}
+#| warning: FALSE
+#| results: 'hide'
 flooded_cells <- global(binary_stack, fun = "sum", na.rm = TRUE)
 
 print(flooded_cells)
@@ -490,6 +494,8 @@ data.frame(
 
 Plot your flood map using the blues9 color palette
 ```{r}
+#| warning: FALSE
+#| results: 'hide'
 certainty <- app(binary_stack, fun = sum)
 
 plot(certainty, 
@@ -503,6 +509,8 @@ plot(certainty,
 - Third once you have a summed raster layer, copy it as a new layer, and set all 0 values to NA. Then map the raster with mapview. Zoom and pan around the interactive map noting that a pixel level is displayed in the upper right hand corner.
 
 ```{r}
+#| warning: FALSE
+#| results: 'hide'
 certainty_copy <- certainty
 
 certainty_copy[certainty_copy == 0] <- NA
