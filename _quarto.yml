@@ -11,6 +11,7 @@ website:
       - lab-01.qmd
       - lab-02.qmd
       - lab-03.qmd
+      - lab-04.qmd
 
 format:
   html:

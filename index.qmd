@@ -10,3 +10,5 @@ about:
 [Lab 2 - Distances and Projections](lab-02.qmd)
 
 [Lab 3 - Tessellations, Point-in-Polygon](lab-03.qmd)
+
+[Lab 4 - Rasters & Remote Sensing](lab-04.qmd)
