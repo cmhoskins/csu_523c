@@ -332,7 +332,7 @@ For all 5 index rasters do the following apply the appropriate threshold and the
 ```{r}
 binary_stack <- c(NDVI_t, NDWI_t, MNDWI_t, WRI_t, SWI_t)
 
-names(binary_stack) <- c("NDWI water threshold", "NDWI water threshold", "MNDWI water threshold", "WRI water threshold", "SWI water threshold")
+names(binary_stack) <- c("NDVI", "NDWI", "MNDWI", "WRI", "SWI")
 
 binary_stack <- app(binary_stack, fun = function(x) ifelse(is.na(x), 0, x))
 
@@ -342,6 +342,9 @@ plot(binary_stack, col = c("white", "blue"))
 ### Step 3 
 
 Describe the differences and similarities between the different maps
+
+MNDWI and WRI show more flooded cells than NDVI, NDWI and SWI
+
 
 ## Question 4
 

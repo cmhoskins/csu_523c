@@ -167,22 +167,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./lab-01.html"> 
-<span class="menu-text">Lab 1 - COVID Trends</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./lab-02.html"> 
-<span class="menu-text">Lab 2 - Distances and Projections</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./lab-03.html"> 
-<span class="menu-text">Lab 3 - Tessellations, Point-in-Polygon</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./lab-04.html" aria-current="page"> 
-<span class="menu-text">Lab 4 - Rasters &amp; Remote Sensing</span></a>
-  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -297,16 +281,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (250 item(s)):
-  - LC09_L2SR_083075_20250426_02_T1
-  - LC09_L2SR_083074_20250426_02_T1
-  - LC09_L2SR_083073_20250426_02_T1
-  - LC09_L2SR_083069_20250426_02_T1
-  - LC09_L2SR_083068_20250426_02_T1
-  - LC09_L2SR_083067_20250426_02_T1
-  - LC09_L2SR_083056_20250426_02_T1
-  - LC09_L2SR_083055_20250426_02_T2
-  - LC09_L2SR_083054_20250426_02_T1
-  - LC09_L2SR_083053_20250426_02_T1
+  - LC09_L2SP_081244_20250428_02_T1
+  - LC09_L2SR_081076_20250428_02_T1
+  - LC09_L2SR_081075_20250428_02_T1
+  - LC09_L2SR_081074_20250428_02_T1
+  - LC09_L2SR_081073_20250428_02_T2
+  - LC09_L2SR_081072_20250428_02_T1
+  - LC09_L2SR_081071_20250428_02_T1
+  - LC09_L2SR_081070_20250428_02_T1
+  - LC09_L2SR_081069_20250428_02_T1
+  - LC09_L2SR_081068_20250428_02_T1
   - ... with 240 more feature(s).
 - assets: 
 ang, atran, blue, cdist, coastal, drad, emis, emsd, green, lwir11, mtl.json, mtl.txt, mtl.xml, nir08, qa, qa_aerosol, qa_pixel, qa_radsat, red, rendered_preview, swir16, swir22, tilejson, trad, urad
@@ -657,7 +641,7 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>binary_stack <span class="ot">&lt;-</span> <span class="fu">c</span>(NDVI_t, NDWI_t, MNDWI_t, WRI_t, SWI_t)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(binary_stack) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NDWI water threshold"</span>, <span class="st">"NDWI water threshold"</span>, <span class="st">"MNDWI water threshold"</span>, <span class="st">"WRI water threshold"</span>, <span class="st">"SWI water threshold"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(binary_stack) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NDVI"</span>, <span class="st">"NDWI"</span>, <span class="st">"MNDWI"</span>, <span class="st">"WRI"</span>, <span class="st">"SWI"</span>)</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>binary_stack <span class="ot">&lt;-</span> <span class="fu">app</span>(binary_stack, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(<span class="fu">is.na</span>(x), <span class="dv">0</span>, x))</span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -675,6 +659,7 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <section id="step-3" class="level3">
 <h3 class="anchored" data-anchor-id="step-3">Step 3</h3>
 <p>Describe the differences and similarities between the different maps</p>
+<p>MNDWI and WRI show more flooded cells than NDVI, NDWI and SWI</p>
 </section>
 </section>
 <section id="question-4" class="level2">
@@ -885,12 +870,12 @@ Warning: did not converge in 10 iterations</code></pre>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(flooded_cells)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>                        sum
-NDWI water threshold    926
-NDWI water threshold.1  806
-MNDWI water threshold  1335
-WRI water threshold    1062
-SWI water threshold     869</code></pre>
+<pre><code>       sum
+NDVI   926
+NDWI   806
+MNDWI 1335
+WRI   1062
+SWI    869</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -906,12 +891,12 @@ SWI water threshold     869</code></pre>
 <span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Flooded_Area_m2 =</span> flooded_area)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>                   Layer Flooded_Cells Flooded_Area_m2
-1   NDWI water threshold           926          833400
-2 NDWI water threshold.1           806          725400
-3  MNDWI water threshold          1335         1201500
-4    WRI water threshold          1062          955800
-5    SWI water threshold           869          782100</code></pre>
+<pre><code>  Layer Flooded_Cells Flooded_Area_m2
+1  NDVI           926          833400
+2  NDWI           806          725400
+3 MNDWI          1335         1201500
+4   WRI          1062          955800
+5   SWI           869          782100</code></pre>
 </div>
 </div>
 <ul>
