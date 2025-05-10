@@ -14,3 +14,4 @@ format:
     theme: 
       light: sandstone
     page-layout: full
+    css: styles.css

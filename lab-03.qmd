@@ -1,16 +1,17 @@
 ---
 title: "Lab 3 - Tessellations, Point-in-Polygon"
-format: 
-  html: 
-    code-fold: true
-    code-summary: "Code"
-editor: 
-  markdown: 
-    wrap: 72
 ---
+```{r}
+#| warning: FALSE
+#| echo: FALSE
+knitr::include_graphics("images/dam.jpg")
+```
 
-Libraries:
+In this lab we will an explore the impacts of tessellated surfaces and the modifiable areal unit problem (MAUP) using the National Dam Inventory maintained by the United States Army Corps of Engineers. Doing this will require repetitive tasks that we will write as functions and careful consideration of feature aggregation/simplification, spatial joins, and data visualization. The end goal is to visualize the distribution of dams and there purposes across the country.
 
+DISCLAIMER: This lab will be crunching a TON of data, in some cases 562,590,604 values for a single process! Therefore, I encourage you to run your code chuck-by-chunk rather then regularly knitting. Your final knit may take a couple of minutes to process. I know this is painful but be proud that, all said, your report will be analyzing billions of meaningful data and geometric relations.
+
+libraries:
 ```{r}
 #| warning: FALSE
 library(tidyverse)
@@ -325,19 +326,19 @@ original counties.
 
 ```{r}
 #| warning: FALSE
-conus_sum <- tess_sum(conus, "CONUS Summary")
+conus_sum <- tess_sum(conus, "CONUS")
 conus_sum
 
-voronoi_sum <- tess_sum(voronoi_simple, "Voronoi Tessallation Summary")
+voronoi_sum <- tess_sum(voronoi_simple, "Voronoi Tessallation")
 voronoi_sum
 
-triangulated_sum <- tess_sum(triangulated_simple, "Triangulated Tessellation Summary")
+triangulated_sum <- tess_sum(triangulated_simple, "Triangulated Tessellation")
 triangulated_sum
 
-grid_sum <- tess_sum(grid_union, "Square Grid Tessellation Summary")
+grid_sum <- tess_sum(grid_union, "Square Grid Tessellation")
 grid_sum
 
-hex_sum <- tess_sum(hex_union, "Hexagonal Grid Tessellation Summary")
+hex_sum <- tess_sum(hex_union, "Hexagonal Grid Tessellation")
 hex_sum
 ```
 
@@ -547,11 +548,11 @@ Point-in-Polygon counts:
 
 ```{r}
 #| warning: FALSE
-dam_plot(dams_conus, "Dam Count by County")
-dam_plot(dams_voronoi, "Dam Count by Voronoi Tessellation")
-dam_plot(dams_triangulated, "Dam Count by Triangulated Tessellation")
-dam_plot(dams_grid, "Dam Count by Square Grid")
-dam_plot(dams_hex, "Dam Count by Hexagonal Grid")
+dam_plot(dams_conus, "County")
+dam_plot(dams_voronoi, "Voronoi Tessellation")
+dam_plot(dams_triangulated, "Triangulated Tessellation")
+dam_plot(dams_grid, "Square Grid")
+dam_plot(dams_hex, "Hexagonal Grid")
 ```
 
 ### Step 3.6

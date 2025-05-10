@@ -1,0 +1,11 @@
+/* For links */
+a {
+  color: #9267DB;  /* Lighter lavender for links */
+  text-decoration: none;  /* Optional: removes underline */
+}
+
+/* Hover effect for links */
+a:hover {
+  color: #C597Fb;  /* Slightly darker lavender (Medium Orchid) on hover */
+  text-decoration: underline;  /* Adds underline on hover */
+}

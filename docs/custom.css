@@ -1,0 +1,14 @@
+/* Darker lavender for links */
+a {
+  color: #6a4c9c !important;  /* Darker lavender shade */
+}
+
+/* Lighter background for headings with gray banner */
+header {
+  background-color: #f5f5f5 !important;  /* Light gray for heading background */
+}
+
+/* Lighter text color for headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #333333 !important;  /* Dark gray for heading text */
+}

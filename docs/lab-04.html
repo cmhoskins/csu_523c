@@ -132,11 +132,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script src="site_libs/clipboard-0.0.1/setClipboardText.js"></script>
 
-<link href="site_libs/HomeButton-0.0.1/home-button.css" rel="stylesheet">
-
 <script src="site_libs/HomeButton-0.0.1/home-button.js"></script>
 
 <script src="site_libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
+
+<link href="site_libs/Flood Certainty-CSS-0.0.1/Flood Certainty_home-button.css" rel="stylesheet">
 
 <link href="site_libs/mapviewCSS-0.0.1/mapview-popup.css" rel="stylesheet">
 
@@ -201,10 +201,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Libraries</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/flood.jpg" class="img-fluid figure-img" width="360"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>On September 26, 2016 at 11:47 a.m. U.S. Central Daylight Time (16:47 UTC) the Cedar and Wapsipinicon rivers in Iowa surged producing a flood wave that breached the river banks. The water level of the Cedar River measured ~20 feet — 8 feet above flood stage—near the city of Cedar Rapids.</p>
+<p>The water level continued to rise until it peaked at ~22 feet on September 27. This event had only been exceeded once, in June 2008, when thousands of people were encouraged to evacuate from Cedar Rapids, the second-most-populous city in Iowa.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/palo-flood-warning.png" class="img-fluid figure-img" width="300"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this lab we are interested in the impacts in Palo Iowa because it is up stream of Cedar Rapids, contains a large amount of farm land, and does not have a forecast location to provide warning.</p>
+<p>We will use the terra and rstac packages - along with our understanding of raster data and categorization - to create flood images using mutliband Landsat Imagery, thresholding, and classification methods.</p>
+<p>libraries:</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstac) <span class="co"># STAC API</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra) <span class="co"># Raster Data handling</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf) <span class="co"># Vector data processing</span></span>
@@ -212,7 +232,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Almost all remote sensing / image analysis begins with the same basic steps:</p>
 <ol type="1">
@@ -226,10 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="step-1---aoi-identification">Step 1 - AOI Identification</h2>
 <p>First we need to identify an AOI. We want to be able to extract the flood extents for Palo, Iowa and its surroundings. To do this we will use the geocoding capabilities within the AOI package.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>palo <span class="ot">&lt;-</span> AOI<span class="sc">::</span><span class="fu">geocode</span>(<span class="st">"Palo, Iowa"</span>, <span class="at">bbox =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>This region defines the AOI for this analysis.</p>
 </section>
@@ -237,10 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="step-2---temporal-identification">Step 2 - Temporal Identification</h2>
 <p>The flood event occurred on September 26, 2016. A primary challenge with remote sensing is the fact that all satellite imagery is not available at all times. In this case Landsat 8 has an 8 day revisit time. To ensure we capture an image within the date of the flood, lets set our time range to the period between September 24th - 29th of 2016. We will define this duration in the form YYYY-MM-DD/YYYY-MM-DD.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>temporal_range <span class="ot">&lt;-</span> <span class="st">"2016-09-24/2016-09-29"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="step-3---identifying-the-relevant-images" class="level2">
@@ -256,11 +269,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>If you go to this link you see the JSON representation of the full data holdings. If you CMD/CTL+F on that page for Landsat you’ll find the references for the available data stores.</p>
 <p>Within R, we can open a connection to this endpoint with the stac function:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open a connection to the MPC STAC API</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>(stac_query <span class="ot">&lt;-</span> <span class="fu">stac</span>(<span class="st">"https://planetarycomputer.microsoft.com/api/stac/v1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###rstac_query
 - url: https://planetarycomputer.microsoft.com/api/stac/v1/
@@ -271,26 +281,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>That connection will provide an open entry to ALL data hosted by MPC. The stac_search function allows us to reduce the catalog to assets that match certain criteria (just like dplyr::filter reduces a data.frame). The get_request() function sends your search to the STAC API returning the metadata about the objects that match a criteria. The service implementation at MPC sets a return limit of 250 items (but it could be overridden with the limit parameter).</p>
 <p>Here, we are interested in the “Landsat Collection 2 Level-2” data. From the JSON file (seen in the browser). To start, lets search for that collection using the stac -&gt; stac_search –&gt; get_request workflow:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(stac_query <span class="ot">&lt;-</span><span class="fu">stac</span>(<span class="st">"https://planetarycomputer.microsoft.com/api/stac/v1"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stac_search</span>(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">collections =</span> <span class="st">"landsat-c2-l2"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_request</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (250 item(s)):
-  - LC09_L2SP_081244_20250428_02_T1
-  - LC09_L2SR_081076_20250428_02_T1
-  - LC09_L2SR_081075_20250428_02_T1
-  - LC09_L2SR_081074_20250428_02_T1
-  - LC09_L2SR_081073_20250428_02_T2
-  - LC09_L2SR_081072_20250428_02_T1
-  - LC09_L2SR_081071_20250428_02_T1
-  - LC09_L2SR_081070_20250428_02_T1
-  - LC09_L2SR_081069_20250428_02_T1
-  - LC09_L2SR_081068_20250428_02_T1
+  - LC09_L2SP_089090_20250506_02_T1
+  - LC09_L2SP_089089_20250506_02_T1
+  - LC09_L2SP_089088_20250506_02_T2
+  - LC09_L2SP_089087_20250506_02_T2
+  - LC09_L2SP_089086_20250506_02_T1
+  - LC09_L2SP_089085_20250506_02_T1
+  - LC09_L2SP_089084_20250506_02_T1
+  - LC09_L2SP_089083_20250506_02_T1
+  - LC09_L2SP_089082_20250506_02_T1
+  - LC09_L2SP_089081_20250506_02_T1
   - ... with 240 more feature(s).
 - assets: 
 ang, atran, blue, cdist, coastal, drad, emis, emsd, green, lwir11, mtl.json, mtl.txt, mtl.xml, nir08, qa, qa_aerosol, qa_pixel, qa_radsat, red, rendered_preview, swir16, swir22, tilejson, trad, urad
@@ -300,15 +307,12 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 </div>
 <p>Awesome! So the first 250 items from the Level-2 Landsat collection were returned. Within each item, there are a number of assets (e.g.&nbsp;the red, green, blue bands) and all items have some associated fields like the sub item assets, the bounding box, etc. We can now refine our search to limit the returned results to those that cover our AOI and time range of interest:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(stac_query <span class="ot">&lt;-</span> <span class="fu">stac</span>(<span class="st">"https://planetarycomputer.microsoft.com/api/stac/v1"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stac_search</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">collections =</span> <span class="st">"landsat-c2-l2"</span>,</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">datetime    =</span> temporal_range,</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">bbox        =</span> <span class="fu">st_bbox</span>(palo)) <span class="sc">|&gt;</span> </span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_request</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (2 item(s)):
@@ -322,8 +326,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 </div>
 <p>By adding these constraints, we now see just two items. One from the Landsat 7 Level 2 dataset, and one from the Landsat 8 Level 2 dataset. For this lab, lets focus on the Landsat 8 item. We can use either the item or the id search criteria to elect this:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(stac_query <span class="ot">&lt;-</span> <span class="fu">stac</span>(<span class="st">"https://planetarycomputer.microsoft.com/api/stac/v1"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stac_search</span>(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">collections =</span> <span class="st">"landsat-c2-l2"</span>,</span>
@@ -331,7 +333,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">bbox        =</span> <span class="fu">st_bbox</span>(palo),</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">limit =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_request</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (1 item(s)):
@@ -343,8 +344,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## OR ## </span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>(stac_query <span class="ot">&lt;-</span> <span class="fu">stac</span>(<span class="st">"https://planetarycomputer.microsoft.com/api/stac/v1"</span>) <span class="sc">|&gt;</span> </span>
@@ -354,7 +353,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">datetime    =</span> temporal_range,</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">bbox        =</span> <span class="fu">st_bbox</span>(palo)) <span class="sc">|&gt;</span> </span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_request</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (1 item(s)):
@@ -367,8 +365,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 </div>
 <p>The last thing we need to do, is sign this request. In rstac, items_sign(sign_planetary_computer()) signs STAC item asset URLs retrieved from Microsoft’s Planetary Computer, ensuring they include authentication tokens for access. sign_planetary_computer() generates the necessary signing function, and items_sign() applies it to STAC items. This is essential for accessing datasets hosted on the Planetary Computer, and other catalog were data access might be requester-paid or limited.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(stac_query <span class="ot">&lt;-</span> <span class="fu">stac</span>(<span class="st">"https://planetarycomputer.microsoft.com/api/stac/v1"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stac_search</span>(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">collections =</span> <span class="st">"landsat-c2-l2"</span>,</span>
@@ -377,7 +373,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">limit =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_request</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">items_sign</span>(<span class="fu">sign_planetary_computer</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (1 item(s)):
@@ -393,10 +388,7 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 <h2 class="anchored" data-anchor-id="step-4---downloading-needed-images">Step 4 - Downloading Needed Images</h2>
 <p>OK! Now that we have identified the item we want, we are ready to download the data using assets_download(). In total, a Landsat 8 item has the following 11 bands:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"images/lsat8-bands.jpg"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -407,21 +399,15 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 </div>
 <p>For this lab, lets just get the first 6 bands. Assets are extracted from a STAC item by the asset name (look at the print statements of the stac_query). Let’s define a vector of the assets we want:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bands 1-6</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'coastal'</span>, <span class="st">'blue'</span>, <span class="st">'green'</span>, <span class="st">'red'</span>, <span class="st">'nir08'</span>, <span class="st">'swir16'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Now we can use the assets_download() function to download the data. The output_dir argument specifies where to save the files, and the overwrite argument specifies whether to overwrite existing files with the same name.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assets_download</span>(<span class="at">items =</span> stac_query,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">asset_names =</span> bands, </span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">output_dir =</span> <span class="st">'data'</span>, </span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>###Items
 - features (1 item(s)):
@@ -443,8 +429,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 <h2 class="anchored" data-anchor-id="question-1---data-access">Question 1 - Data Access</h2>
 <p>Download all the data needed for this lab. What are the dimensions of your stacked image? What is the CRS? What is the cell resolution?</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>raster_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/landsat-c2/level-2/standard/oli-tirs/2016/025/031/LC08_L2SP_025031_20160926_20200906_02_T1"</span>, </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">.TIF$"</span>, </span>
@@ -455,7 +439,6 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(palo_18_20160926) <span class="ot">&lt;-</span> bands</span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>palo_18_20160926</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster 
 dimensions  : 7801, 7681, 6  (nrow, ncol, nlyr)
@@ -474,12 +457,9 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <h2 class="anchored" data-anchor-id="step-5---analyze-the-images">Step 5 - Analyze the Images</h2>
 <p>We only want to analyze our image for the regions surrounding Palo (our AOI). Transform your AOI to the CRS of the landsat stack and use it to crop your raster stack.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>palo_transform <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(palo, <span class="fu">crs</span>(palo_18_20160926))</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>palo_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(palo_18_20160926, <span class="fu">vect</span>(palo_transform))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Awesome! We have now (1) identified, (2) downloaded, and (3) saved our images.</p>
 <p>We have loaded them as a multiband SpatRast object and cropped the domain to our AOI. Lets make a few RGB plots to see what these images reveal.</p>
@@ -494,72 +474,57 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <p>For question 2, make four unique combinations:</p>
 <p>R-G-B (natural color) NIR-R-G (fa) (color infared) NIR-SWIR1-R (false color water focus) Your choice What does each image allow you to see?</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>natural_color <span class="ot">&lt;-</span> <span class="fu">plotRGB</span>(palo_crop, <span class="at">r =</span> <span class="dv">4</span>, <span class="at">g =</span> <span class="dv">3</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">stretch =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>natural_color</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># as close to true color as you can get</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vegetation is green, water is blue or black, urban areas are gray or brown, soil is brown or tan</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># no stretch with raw values</span></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>CIR <span class="ot">&lt;-</span> <span class="fu">plotRGB</span>(palo_crop, <span class="at">r =</span> <span class="dv">5</span>, <span class="at">g =</span> <span class="dv">4</span>, <span class="at">b =</span> <span class="dv">3</span>, <span class="at">stretch =</span> <span class="st">"lin"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>CIR</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># good for visualizing vegetation in red</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vegetation is red, water is blue or black, urban areas are light green, soil is orange or brown</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># stretch uses linear scaling to enhance contrast</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>false_color <span class="ot">&lt;-</span> <span class="fu">plotRGB</span>(palo_crop, <span class="at">r=</span><span class="dv">5</span>, <span class="at">g=</span><span class="dv">6</span>, <span class="at">b=</span><span class="dv">4</span>, <span class="at">stretch =</span> <span class="st">"hist"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-15-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-17-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>false_color</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># good for visualizing land and water</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vegetation is red, water is blue or black, urban areas are green or yellow, soil is yellow or orange</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># stretch based on histogram and will emphasise certain features</span></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>false_color_ag <span class="ot">&lt;-</span> <span class="fu">plotRGB</span>(palo_crop, <span class="at">r=</span><span class="dv">6</span>, <span class="at">g=</span><span class="dv">5</span>, <span class="at">b=</span><span class="dv">2</span>, <span class="at">stretch =</span> <span class="st">"q95"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-15-4.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-17-4.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>false_color_ag</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># agricultural vegetation shows up bright green</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vegetation is green, water is blue or black, urban areas are purple or brown, soil is brown or tan</span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># stretch based on 95th percentile and removes outliers</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="question-3---indices-and-thresholds" class="level2">
@@ -575,8 +540,6 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <li>Plot the new stack, using the following palette (colorRampPalette(c(“blue”, “white”, “red”))(256))</li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># NDVI = (NIR - Red) / (NIR + Red)</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>NDVI <span class="ot">&lt;-</span> (palo_crop[[<span class="dv">5</span>]] <span class="sc">-</span> palo_crop[[<span class="dv">4</span>]]) <span class="sc">/</span> (palo_crop[[<span class="dv">5</span>]] <span class="sc">+</span> palo_crop[[<span class="dv">4</span>]])</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -593,21 +556,17 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>diff <span class="ot">&lt;-</span> palo_crop[[<span class="dv">2</span>]] <span class="sc">-</span> palo_crop[[<span class="dv">6</span>]]</span>
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>diff[diff <span class="sc">&lt;=</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span>  </span>
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>SWI <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">sqrt</span>(diff)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>stack <span class="ot">&lt;-</span> <span class="fu">c</span>(NDVI, NDWI, MNDWI, WRI, SWI)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stack) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NDVI"</span>, <span class="st">"NDWI"</span>, <span class="st">"MNDWI"</span>, <span class="st">"WRI"</span>, <span class="st">"SWI"</span>)</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(stack, <span class="at">col =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"white"</span>, <span class="st">"red"</span>))(<span class="dv">256</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -619,14 +578,11 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <p>Thresholds: - NDVI : Cells less than 0 - NDWI : Cells greater than 0 - MNDWI : Cells greater than 0 - WRI : Cells greater than 1 - SWI : Cells less than 5</p>
 <p>For this, we will use the app function and apply a custom formula for each calculated field from step 1 that applies the threshold in a way that flooded cells are 1 and non-flooded cells are 0.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>NDVI_t <span class="ot">&lt;-</span> <span class="fu">app</span>(NDVI, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(x <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>NDWI_t <span class="ot">&lt;-</span> <span class="fu">app</span>(NDWI, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>MNDWI_t <span class="ot">&lt;-</span> <span class="fu">app</span>(MNDWI, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>WRI_t <span class="ot">&lt;-</span> <span class="fu">app</span>(WRI, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>SWI_t <span class="ot">&lt;-</span> <span class="fu">app</span>(SWI, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(x <span class="sc">&lt;</span> <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>The app function applies a function to each cell of the raster, and the ifelse function is used to set the values based on the threshold.</p>
 <p>For all 5 index rasters do the following apply the appropriate threshold and then do the following:</p>
@@ -637,8 +593,6 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <li>Plot the stack so that floods are blue, and background is white.</li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>binary_stack <span class="ot">&lt;-</span> <span class="fu">c</span>(NDVI_t, NDWI_t, MNDWI_t, WRI_t, SWI_t)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(binary_stack) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NDVI"</span>, <span class="st">"NDWI"</span>, <span class="st">"MNDWI"</span>, <span class="st">"WRI"</span>, <span class="st">"SWI"</span>)</span>
@@ -646,11 +600,10 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>binary_stack <span class="ot">&lt;-</span> <span class="fu">app</span>(binary_stack, <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">ifelse</span>(<span class="fu">is.na</span>(x), <span class="dv">0</span>, x))</span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(binary_stack, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"blue"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -671,10 +624,7 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <h3 class="anchored" data-anchor-id="step-1">Step 1</h3>
 <p>Anytime we want to be able to produce a consistent/reproducible result from a random process in R we need to set a seed. Do so using set.seed</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="step-2" class="level3">
@@ -688,19 +638,13 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <li>Remove NA values from your extracted data with na.omit for safety</li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">values</span>(palo_crop)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 12192     6</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> vals[<span class="fu">complete.cases</span>(vals), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="step-3-1" class="level3">
@@ -710,10 +654,7 @@ names       : coastal, blue, green, red, nir08, swir16 </code></pre>
 <li><p>Once the kmeans algorithm runs, the output will be a list of components. One of these is cluster which provides a vector of integers from (1:k) indicating the cluster to which each row was allocated.</p></li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vals, <span class="at">centers =</span> <span class="dv">12</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: did not converge in 10 iterations
 Warning: did not converge in 10 iterations
@@ -728,80 +669,65 @@ Warning: did not converge in 10 iterations</code></pre>
 <li>Try a few different clusters (k) to see how the map changes.</li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>km_raster <span class="ot">&lt;-</span> <span class="fu">raster</span>(palo_crop[[<span class="dv">1</span>]])</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(km_raster)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(palo_crop[[<span class="dv">1</span>]]))] <span class="ot">&lt;-</span> km<span class="sc">$</span>cluster</span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km_raster, <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="dv">12</span>), <span class="at">main =</span> <span class="st">"K-means with 12 clusters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#4 clusters</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>km4 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vals, <span class="at">centers =</span> <span class="dv">4</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>km_raster4 <span class="ot">&lt;-</span> <span class="fu">raster</span>(palo_crop[[<span class="dv">1</span>]])</span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(km_raster4)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(palo_crop[[<span class="dv">1</span>]]))] <span class="ot">&lt;-</span> km4<span class="sc">$</span>cluster</span>
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km_raster4, <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="dv">4</span>), <span class="at">main =</span> <span class="st">"K-means with 4 clusters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#7 clusters</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>km7 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vals, <span class="at">centers =</span> <span class="dv">7</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>km_raster7 <span class="ot">&lt;-</span> <span class="fu">raster</span>(palo_crop[[<span class="dv">1</span>]])</span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(km_raster7)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(palo_crop[[<span class="dv">1</span>]]))] <span class="ot">&lt;-</span> km7<span class="sc">$</span>cluster</span>
 <span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km_raster7, <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="dv">7</span>), <span class="at">main =</span> <span class="st">"K-means with 7 clusters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-24-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#8 clusters</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>km8 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vals, <span class="at">centers =</span> <span class="dv">8</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>km_raster8 <span class="ot">&lt;-</span> <span class="fu">raster</span>(palo_crop[[<span class="dv">1</span>]])</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(km_raster8)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(palo_crop[[<span class="dv">1</span>]]))] <span class="ot">&lt;-</span> km8<span class="sc">$</span>cluster</span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km_raster8, <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="dv">8</span>), <span class="at">main =</span> <span class="st">"K-means with 8 clusters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-24-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-26-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">#11 clusters</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>km11 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vals, <span class="at">centers =</span> <span class="dv">11</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>km_raster11 <span class="ot">&lt;-</span> <span class="fu">raster</span>(palo_crop[[<span class="dv">1</span>]])</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(km_raster11)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(palo_crop[[<span class="dv">1</span>]]))] <span class="ot">&lt;-</span> km11<span class="sc">$</span>cluster</span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km_raster11, <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="dv">11</span>), <span class="at">main =</span> <span class="st">"K-means with 11 clusters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-24-4.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-26-4.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -818,37 +744,28 @@ Warning: did not converge in 10 iterations</code></pre>
 <li><p>Finally add this to add to your flood raster stack with c() and make a new plot!</p></li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>flood_table <span class="ot">&lt;-</span> <span class="fu">table</span>(NDWI_t[], km_raster[])</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(flood_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   
        1    2    3    4    5    6    7    8    9   10   11   12
   0  717  959 1088 1245 2411  508  734 1338 1121  422  122  721
   1    0    1    0    0    0    3    0    0    0  802    0    0</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which.max</span>(flood_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 9</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>flood_class <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>flood_raster <span class="ot">&lt;-</span> km_raster</span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(flood_raster) <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">values</span>(flood_raster) <span class="sc">==</span> flood_class, <span class="dv">1</span>, <span class="dv">0</span>)</span>
 <span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(flood_raster, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"blue"</span>), <span class="at">main =</span> <span class="st">"Floodwater (K-means)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(flood_raster, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"blue"</span>), <span class="at">main =</span> <span class="st">"Flooded Cells (K-means)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -863,12 +780,9 @@ Warning: did not converge in 10 iterations</code></pre>
 </ul>
 <p>Print these values</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>flooded_cells <span class="ot">&lt;-</span> <span class="fu">global</span>(binary_stack, <span class="at">fun =</span> <span class="st">"sum"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(flooded_cells)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       sum
 NDVI   926
@@ -877,8 +791,6 @@ MNDWI 1335
 WRI   1062
 SWI    869</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>cell_res <span class="ot">&lt;-</span> <span class="fu">res</span>(binary_stack) </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>cell_area <span class="ot">&lt;-</span> cell_res[<span class="dv">1</span>] <span class="sc">*</span> cell_res[<span class="dv">2</span>] </span>
@@ -889,7 +801,6 @@ SWI    869</code></pre>
 <span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Layer =</span> <span class="fu">rownames</span>(flooded_cells),</span>
 <span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Flooded_Cells =</span> flooded_cells<span class="sc">$</span>sum,</span>
 <span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Flooded_Area_m2 =</span> flooded_area)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Layer Flooded_Cells Flooded_Area_m2
 1  NDVI           926          833400
@@ -904,20 +815,17 @@ SWI    869</code></pre>
 </ul>
 <p>Plot your flood map using the blues9 color palette</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>certainty <span class="ot">&lt;-</span> <span class="fu">app</span>(binary_stack, <span class="at">fun =</span> sum)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(certainty, </span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Flooded Area Classification Certainty (0–5 Methods)"</span>, </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Flooded Area Classification Certainty"</span>, </span>
 <span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">colramp =</span> <span class="fu">colorRampPalette</span>(blues9),</span>
 <span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">5.5</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
 <span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab-04_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab-04_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -926,20 +834,22 @@ SWI    869</code></pre>
 <li>Third once you have a summed raster layer, copy it as a new layer, and set all 0 values to NA. Then map the raster with mapview. Zoom and pan around the interactive map noting that a pixel level is displayed in the upper right hand corner.</li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>certainty_copy <span class="ot">&lt;-</span> certainty</span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>certainty_copy[certainty_copy <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mapview</span>(certainty_copy, </span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Flooded Area Classification Certainty (0–5 Methods)"</span>, </span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">layer.name =</span> <span class="st">"Flood Certainty"</span>, </span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">colramp =</span> <span class="fu">colorRampPalette</span>(blues9))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>blues <span class="ot">&lt;-</span> <span class="fu">brewer.pal</span>(<span class="dv">9</span>, <span class="st">"Blues"</span>)[<span class="dv">2</span><span class="sc">:</span><span class="dv">9</span>]  <span class="co"># Skip the lightest 3 colors</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>color_blues <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(blues)</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="fu">mapview</span>(certainty_copy, </span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Flooded Area Classification Certainty"</span>, </span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">layer.name =</span> <span class="st">"Flood Certainty"</span>, </span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.regions =</span> color_blues,</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">na.color =</span> <span class="cn">NA</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="leaflet html-widget html-fill-item" id="htmlwidget-ee0daf4096192d16debe" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-ee0daf4096192d16debe">{"x":{"options":{"minZoom":1,"maxZoom":52,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"preferCanvas":false,"bounceAtZoomLimits":false,"maxBounds":[[[-90,-370]],[[90,370]]]},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron","CartoDB.Positron","CartoDB.Positron",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["CartoDB.DarkMatter","CartoDB.DarkMatter","CartoDB.DarkMatter",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenStreetMap","OpenStreetMap","OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["Esri.WorldImagery","Esri.WorldImagery","Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenTopoMap","OpenTopoMap","OpenTopoMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addRasterImage","args":["data:image/png;base64,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",[[42.08247389784549,-91.81355686180419],[42.04768726196072,-91.77795931783032]],0.8,null,"Flood Certainty","Flood Certainty"]},{"method":"removeLayersControl","args":[]},{"method":"addLayersControl","args":[["CartoDB.Positron","CartoDB.DarkMatter","OpenStreetMap","Esri.WorldImagery","OpenTopoMap"],"Flood Certainty",{"collapsed":true,"autoZIndex":true,"position":"topleft"}]},{"method":"addControl","args":["","topright","imageValues-Flood Certainty","info legend "]},{"method":"addImageQuery","args":["Flood Certainty",[-91.81355686180419,42.04742080340201,-91.77787781924565,42.08247389784549],"mousemove",7,"Layer"]},{"method":"addLegend","args":[{"colors":["#040404 , #040404 0%, #321239 12.5%, #61145F 25%, #951871 37.5%, #C33868 50%, #E76054 62.5%, #F3963C 75%, #FDC95A 87.5%, #FFFE9E 100%, #FFFE9E "],"labels":["1.0","1.5","2.0","2.5","3.0","3.5","4.0","4.5","5.0"],"na_color":"#BEBEBE","na_label":"NA","opacity":1,"position":"topright","type":"numeric","title":"Flood Certainty","extra":{"p_1":0,"p_n":1},"layerId":null,"className":"info legend","group":"Flood Certainty"}]},{"method":"addScaleBar","args":[{"maxWidth":100,"metric":true,"imperial":true,"updateWhenIdle":true,"position":"bottomleft"}]},{"method":"addHomeButton","args":[-91.8135568618042,42.04780127070886,-91.77810544042319,42.0824738978455,true,"Flood Certainty","Zoom to Flood Certainty","<strong> Flood Certainty <\/strong>","bottomright"]}],"limits":{"lat":[42.04768726196072,42.08247389784549],"lng":[-91.81355686180419,-91.77795931783032]}},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n      function(el, x, data) {\n      // get the leaflet map\n      var map = this; //HTMLWidgets.find('#' + el.id);\n      // we need a new div element because we have to handle\n      // the mouseover output separately\n      // debugger;\n      function addElement () {\n      // generate new div Element\n      var newDiv = $(document.createElement('div'));\n      // append at end of leaflet htmlwidget container\n      $(el).append(newDiv);\n      //provide ID and style\n      newDiv.addClass('lnlt');\n      newDiv.css({\n      'position': 'relative',\n      'bottomleft':  '0px',\n      'background-color': 'rgba(255, 255, 255, 0.7)',\n      'box-shadow': '0 0 2px #bbb',\n      'background-clip': 'padding-box',\n      'margin': '0',\n      'padding-left': '5px',\n      'color': '#333',\n      'font': '9px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif',\n      'z-index': '700',\n      });\n      return newDiv;\n      }\n\n\n      // check for already existing lnlt class to not duplicate\n      var lnlt = $(el).find('.lnlt');\n\n      if(!lnlt.length) {\n      lnlt = addElement();\n\n      // grab the special div we generated in the beginning\n      // and put the mousmove output there\n\n      map.on('mousemove', function (e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                           ' lon: ' + (e.latlng.lng).toFixed(5) +\n                           ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                           ' | zoom: ' + map.getZoom() +\n                           ' | x: ' + L.CRS.EPSG3857.project(e.latlng).x.toFixed(0) +\n                           ' | y: ' + L.CRS.EPSG3857.project(e.latlng).y.toFixed(0) +\n                           ' | epsg: 3857 ' +\n                           ' | proj4: +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs ');\n      } else {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      }\n      });\n\n      // remove the lnlt div when mouse leaves map\n      map.on('mouseout', function (e) {\n      var strip = document.querySelector('.lnlt');\n      if( strip !==null) strip.remove();\n      });\n\n      };\n\n      //$(el).keypress(67, function(e) {\n      map.on('preclick', function(e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      var txt = document.querySelector('.lnlt').textContent;\n      console.log(txt);\n      //txt.innerText.focus();\n      //txt.select();\n      setClipboardText('\"' + txt + '\"');\n      }\n      });\n\n      }\n      ).call(this.getMap(), el, x, data);\n}","data":null},{"code":"function(el, x, data) {\n  return (function(el,x,data){\n           var map = this;\n\n           map.on('keypress', function(e) {\n               console.log(e.originalEvent.code);\n               var key = e.originalEvent.code;\n               if (key === 'KeyE') {\n                   var bb = this.getBounds();\n                   var txt = JSON.stringify(bb);\n                   console.log(txt);\n\n                   setClipboardText('\\'' + txt + '\\'');\n               }\n           })\n        }).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
+<script type="application/json" data-for="htmlwidget-ee0daf4096192d16debe">{"x":{"options":{"minZoom":1,"maxZoom":52,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"preferCanvas":false,"bounceAtZoomLimits":false,"maxBounds":[[[-90,-370]],[[90,370]]]},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron","CartoDB.Positron","CartoDB.Positron",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["CartoDB.DarkMatter","CartoDB.DarkMatter","CartoDB.DarkMatter",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenStreetMap","OpenStreetMap","OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["Esri.WorldImagery","Esri.WorldImagery","Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenTopoMap","OpenTopoMap","OpenTopoMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addRasterImage","args":["data:image/png;base64,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",[[42.08247389784549,-91.81355686180419],[42.04768726196072,-91.77795931783032]],"Flood Certainty","Flood Certainty",{"tileSize":256,"zIndex":1,"minZoom":0,"opacity":0.8}]},{"method":"removeLayersControl","args":[]},{"method":"addLayersControl","args":[["CartoDB.Positron","CartoDB.DarkMatter","OpenStreetMap","Esri.WorldImagery","OpenTopoMap"],"Flood Certainty",{"collapsed":true,"autoZIndex":true,"position":"topleft"}]},{"method":"addControl","args":["","topright","imageValues-Flood Certainty","info legend "]},{"method":"addImageQuery","args":["Flood Certainty",[-91.81355686180419,42.04742080340201,-91.77787781924565,42.08247389784549],"mousemove",7,"Layer"]},{"method":"addLegend","args":[{"colors":["#DEEBF7 , #DEEBF7 0%, #C5DDEE 12.5%, #A7CCE5 25%, #7EB7DA 37.5%, #5A9FCD 50%, #3785BE 62.5%, #1F68AD 75%, #0E4C8F 87.5%, #08306B 100%, #08306B "],"labels":["1.0","1.5","2.0","2.5","3.0","3.5","4.0","4.5","5.0"],"na_color":"#FFFFFF","na_label":"NA","opacity":1,"position":"topright","type":"numeric","title":"Flood Certainty","extra":{"p_1":0,"p_n":1},"layerId":null,"className":"info legend","group":"Flood Certainty"}]},{"method":"addScaleBar","args":[{"maxWidth":100,"metric":true,"imperial":true,"updateWhenIdle":true,"position":"bottomleft"}]},{"method":"addHomeButton","args":[-91.8135568618042,42.04780127070886,-91.77810544042319,42.0824738978455,true,"Flood Certainty","Zoom to Flood Certainty","<strong> Flood Certainty <\/strong>","bottomright"]}],"limits":{"lat":[42.04768726196072,42.08247389784549],"lng":[-91.81355686180419,-91.77795931783032]}},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n      function(el, x, data) {\n      // get the leaflet map\n      var map = this; //HTMLWidgets.find('#' + el.id);\n      // we need a new div element because we have to handle\n      // the mouseover output separately\n      // debugger;\n      function addElement () {\n      // generate new div Element\n      var newDiv = $(document.createElement('div'));\n      // append at end of leaflet htmlwidget container\n      $(el).append(newDiv);\n      //provide ID and style\n      newDiv.addClass('lnlt');\n      newDiv.css({\"position\":\"relative\",\"bottomleft\":\"0px\",\"background-color\":\"rgba(255, 255, 255, 0.7)\",\"box-shadow\":\"0 0 2px #bbb\",\"background-clip\":\"padding-box\",\"margin\":\"0\",\"padding-left\":\"5px\",\"padding-right\":\"5px\",\"color\":\"#333\",\"font-size\":\"9px\",\"font-family\":\"\\\"Helvetica Neue\\\", Arial, Helvetica, sans-serif\",\"text-align\":\"left\",\"z-index\":\"700\"});\n      return newDiv;\n      }\n\n\n      // check for already existing lnlt class to not duplicate\n      var lnlt = $(el).find('.lnlt');\n\n      if(!lnlt.length) {\n      lnlt = addElement();\n\n      // grab the special div we generated in the beginning\n      // and put the mousmove output there\n\n      map.on('mousemove', function (e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                           ' lon: ' + (e.latlng.lng).toFixed(5) +\n                           ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                           ' | zoom: ' + map.getZoom() +\n                           ' | x: ' + L.CRS.EPSG3857.project(e.latlng).x.toFixed(0) +\n                           ' | y: ' + L.CRS.EPSG3857.project(e.latlng).y.toFixed(0) +\n                           ' | epsg: 3857 ' +\n                           ' | proj4: +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs ');\n      } else {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      }\n      });\n\n      // remove the lnlt div when mouse leaves map\n      map.on('mouseout', function (e) {\n      var strip = document.querySelector('.lnlt');\n      if( strip !==null) strip.remove();\n      });\n\n      };\n\n      //$(el).keypress(67, function(e) {\n      map.on('preclick', function(e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      var txt = document.querySelector('.lnlt').textContent;\n      console.log(txt);\n      //txt.innerText.focus();\n      //txt.select();\n      setClipboardText('\"' + txt + '\"');\n      }\n      });\n\n      }\n      ).call(this.getMap(), el, x, data);\n}","data":null},{"code":"function(el, x, data) {\n  return (function(el,x,data){\n           var map = this;\n\n           map.on('keypress', function(e) {\n               console.log(e.originalEvent.code);\n               var key = e.originalEvent.code;\n               if (key === 'KeyE') {\n                   var bb = this.getBounds();\n                   var txt = JSON.stringify(bb);\n                   console.log(txt);\n\n                   setClipboardText('\\'' + txt + '\\'');\n               }\n           })\n        }).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
 </div>
 </div>
 <p>Why are some of the cell values not an even number? I think it is because the indices raster considers 5 different thresholds.</p>

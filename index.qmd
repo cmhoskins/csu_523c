@@ -12,3 +12,5 @@ about:
 [Lab 3 - Tessellations, Point-in-Polygon](lab-03.qmd)
 
 [Lab 4 - Rasters & Remote Sensing](lab-04.qmd)
+
+[Lab 5 - Machine Learning in Hydrology](lab-05.qmd)

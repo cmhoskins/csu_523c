@@ -1,12 +1,18 @@
 ---
 title: "Lab 2 - Distances and Projections"
-format: 
-  html: 
-    code-fold: true
-    code-summary: "Code"
 ---
 
-Libraries
+```{r}
+#| warning: FALSE
+#| echo: FALSE
+knitr::include_graphics("images/border_zone.jpg")
+```
+
+In this lab we will explore the properties of sf, sfc, and sfg features & objects; how they are stored; and issues related to distance calculation and coordinate transformation.
+
+We will continue to build on our data wrangling and data visualization skills; as well as document preparation via Quarto and GitHub.
+
+libraries:
 ```{r}
 #| warning: FALSE
 # spatial data science
@@ -15,8 +21,6 @@ library(sf)
 library(units)
 
 # Data
-library(USAboundaries)
-library(rnaturalearth)
 library(knitr)
 library(rmarkdown)
 
@@ -72,6 +76,10 @@ In R, country boundaries are stored in the `rnaturalearth` package. In case th
 ```{r}
 #| warning: FALSE
 remotes::install_github("ropenscilabs/rnaturalearthdata")
+
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+install.packages("rnaturalearth")
+library(rnaturalearth)
 ```
 
 Once installed:
@@ -142,7 +150,7 @@ slice_max(uscities, n = 5, order_by = country_border) %>%
     state_id = "state",
     country_border = "distance from border (km)"
   ) %>%
-  set_caption("5 Cities Furthest From a State Border")
+  set_caption("5 Cities Farthest From a State Border")
 ```
 
 ### 2.2 - Distance to States (km)
@@ -169,7 +177,7 @@ slice_max(uscities, n = 5, order_by = state_border) %>%
     state_id = "state",
     state_border = "distance from border (km)"
   ) %>%
-  set_caption("5 USA Cities Furthest From a State Border")
+  set_caption("5 USA Cities Farthest From a State Border")
 ```
 
 ### 2.3 - Distance to Mexico (km)
@@ -195,7 +203,7 @@ slice_max(uscities, n = 5, order_by = mexico_border) %>%
     state_id = "state",
     mexico_border = "distance from Mexico (km)"
   ) %>%
-  set_caption("5 Cities Furthest From the Mexican Border")
+  set_caption("5 Cities Farthest From the Mexican Border")
 ```
 
 ### 2.4 - Distance to Canada (km)
@@ -221,7 +229,7 @@ slice_max(uscities, n = 5, order_by = canada_border) %>%
     state_id = "state",
     canada_border = "distance from Canada (km)"
   ) %>%
-  set_caption("5 Cities Furthest From the Canadian Border")
+  set_caption("5 Cities Farthest From the Canadian Border")
 ```
 
 ## Question 3
@@ -236,7 +244,6 @@ Use ggrepel::geom_label_repel to label your cities
 
 ```{r}
 #| warning: FALSE
-
 top10_cities <- uscities %>%
   arrange(desc(population)) %>%
   slice(1:10)
@@ -254,7 +261,7 @@ ggplot() +
     box.padding = 0.5) +
   labs(fill = "top10_cities") +
   ggthemes::theme_map() +
-  labs(title = "Top 10 Most Populated Cities in the USA")
+  labs(title = "10 Most Populated Cities in the USA")
 ```
 
 ### 3.2 - City Distance from the Border
@@ -278,8 +285,7 @@ ggplot() +
   scale_color_viridis_c(
     option = "viridis",   
     name = "km" )+
-  labs(title = "USA Cities Colored by Distance from Nearest State Border",
-       caption = "labeled cities are the 5 cities farthest from a country border")
+  labs(title = "5 USA Cities Farthest from a National Border")
 ```
 
 ### 3.3 City Distance from Nearest State
@@ -303,8 +309,7 @@ ggplot() +
   scale_color_viridis_c(
     option = "viridis",   
     name = "km" )+
-  labs(title = "USA Cities Colored by Distance from Nearest State Border",
-       caption = "labeled cities are the 5 cities farthest from a state border") 
+  labs(title = "5 USA Cities Farthest from the Nearest State Border") 
 ```
 
 ### 3.4 Equidistance boundary from Mexico and Canada
@@ -338,8 +343,7 @@ ggplot() +
     stat = "sf_coordinates",
     size = 3) +
   scale_color_viridis_c(option = "viridis", name = "± km") +  
-  labs(title = "Cities ±100 km Equidistant from the MEX and CAN Borders",
-       caption = "labeled cities are the 5 most populus equidistant cities")+
+  labs(title = "5 Most Populated Cities ±100 km Equidistant from the MEX and CAN Borders")+
   ggthemes::theme_map()
 ```
 
@@ -403,7 +407,7 @@ tibble(
   `Percentage of Population` = paste0(round(percent_in_zone, 2), "%")
 ) %>%
   flextable::flextable() %>%
-  flextable::set_caption("Within the 100-Mile U.S. Border Zone") %>%
+  flextable::set_caption("Within the 100-Mile USA Border Zone") %>%
   flextable::theme_vanilla() %>%  # Apply a vanilla theme for less crowded look
   flextable::align(align = "center", j = c("Cities", "Population", "Percentage of Population")) %>%
   flextable::padding(padding = 15) 
@@ -429,7 +433,7 @@ top10_cities <- zone_cities %>%
 
 
 ggplot() +
-  geom_sf(data = zone, fill = NA) +  
+  geom_sf(data = zone, fill = NA) +
   geom_sf(data = zone_cities, aes(color = zone_border), size = 1, fill = NA)+
   geom_sf(data = top10_cities, color = "red", fill = NA) +  
   ggrepel::geom_label_repel(
@@ -439,13 +443,11 @@ ggplot() +
     size = 3,
     max.overlaps = 20,   
     box.padding = 0.5) +
-  labs(title = "Top 10 Most Populated Cities in the 100 Mile Danger Zone") +
+  labs(title = "Top 10 Most Populated Cities in the 100-Mile USA Border Zone") +
   scale_color_gradient(low = "orange", high = "darkred", guide = "none") +  
   ggthemes::theme_map() +
   theme(legend.position = "bottom")
 ```
-
-##### Note: I wasn't able to figure out how to use gghighlight
 
 ## 4.3 Instead of labeling the 10 most populous cites, label the most populous city in each state within the Danger Zone.
 ```{r}
@@ -473,7 +475,7 @@ ggplot() +
     size = 3,
     max.overlaps = 75,   
     box.padding = 0.5) +
-  labs(title = "Most Populous City in Each State within the 100 Mile Danger Zone") +
+  labs(title = "Most Populous City in Each State within the 100-Mile USA Border Zone") +
   scale_color_gradient(low = "orange", high = "darkred", guide = "none") +  
   ggthemes::theme_map() +
   theme(legend.position = "bottom")
