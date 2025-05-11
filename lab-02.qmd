@@ -1,5 +1,8 @@
 ---
 title: "Lab 2 - Distances and Projections"
+author:
+  - "Completed by: Colleen Hoskins"
+  - "Created by: Mike Johnson, PhD"
 ---
 
 ```{r}
@@ -30,6 +33,7 @@ library(ggrepel)
 library(knitr)
 library(mapview)
 library(flextable)
+library(viridis)
 ```
 
 ## Question 1:
@@ -453,7 +457,7 @@ ggplot() +
 ```{r}
 #| warning: FALSE
 zone_distance <- st_distance(zone_cities, zone) %>%
-  as.vector()  
+  as.vector() / 1609.34  # 1 mile = 1609.34 meters  
 
 zone_cities$zone_border <- zone_distance   
 
@@ -473,10 +477,14 @@ ggplot() +
     aes(label = city, geometry = geometry),
     stat = "sf_coordinates",
     size = 3,
-    max.overlaps = 75,   
-    box.padding = 0.5) +
-  labs(title = "Most Populous City in Each State within the 100-Mile USA Border Zone") +
-  scale_color_gradient(low = "orange", high = "darkred", guide = "none") +  
+    max.overlaps = 80,   
+    box.padding = 0.7) +
+  scale_color_viridis_c(
+    name = "Distance from Border (miles)",
+    option = "inferno",
+    begin = 0.4,  # skip the dark purples/blacks
+    end = 0.95    # stop before very light yellow-whites
+    ) +
   ggthemes::theme_map() +
   theme(legend.position = "bottom")
 ```

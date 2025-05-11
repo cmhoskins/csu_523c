@@ -1,5 +1,8 @@
 ---
 title: "Lab 1 - COVID Trends"
+author:
+  - "Completed by: Colleen Hoskins"
+  - "Created by: Mike Johnson, PhD"
 ---
 
 ```{r}
@@ -10,7 +13,7 @@ knitr::include_graphics("images/nyt-covid.png")
 
 In this lab you will practice data wrangling and visualization skills using COVID-19 data curated by the New York Times. This data is a large dataset measuring the cases and deaths per US county across the lifespan of COVID from its early beginnings to just past the peak. The data stored in daily cummulative counts, is a great example of data that needs to be wrangled and cleaned before any analysis can be done.
 
-libraries
+libraries:
 ```{r}
 #| warning: FALSE
 library(tidyverse)

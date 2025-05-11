@@ -1,5 +1,8 @@
 ---
 title: "Lab 3 - Tessellations, Point-in-Polygon"
+author:
+  - "Completed by: Colleen Hoskins"
+  - "Created by: Mike Johnson, PhD"
 ---
 ```{r}
 #| warning: FALSE

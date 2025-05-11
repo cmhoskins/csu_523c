@@ -1,5 +1,5 @@
 ---
-title: "523-C Labs"
+title: "523-C: Data Analysis for Water Resources - Labs"
 toc: false
 about: 
   template: jolla
